@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+			crossorigin="anonymous">
+	<title>Профиль</title>
+	<style>
+		a.navbar-brand {
+          white-space: normal;
+          text-align: center;
+          word-break: break-all;
+        }
+
+        a {
+          color: #0077cc;
+        }
+
+        .btn-primary {
+          color: #fff;
+          background-color: #1b6ec2;
+          border-color: #1861ac;
+        }
+
+        .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+          color: #fff;
+          background-color: #1b6ec2;
+          border-color: #1861ac;
+        }
+
+        .border-top {
+          border-top: 1px solid #e5e5e5;
+        }
+        .border-bottom {
+          border-bottom: 1px solid #e5e5e5;
+        }
+
+        .box-shadow {
+          box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+        }
+
+        button.accept-policy {
+          font-size: 1rem;
+          line-height: inherit;
+        }
+
+        .footer {
+          position: absolute;
+          bottom: 0;
+          width: 100%;
+          white-space: nowrap;
+          line-height: 60px;
+        }
+
+        .bg-gray {
+            background-color: #888;
+        }
+	</style>
+</head>
+<body>
+<header>
+	<div th:replace="fragments/header :: header">&nbsp;</div>
+</header>
+<div class="container">
+	<main role="main" class="pb-3">
+		<div th:if="${validationErrors != null}" class="alert alert-danger alert-dismissible fade show" role="alert">
+			<button
+					type="button"
+					class="close"
+					data-dismiss="alert"
+					aria-label="Close"
+					style="position: absolute; top: 10px; right: 10px; border: none; background: transparent; outline: none;">
+				<span aria-hidden="true" style="font-size: 2rem; line-height: 1.2; color: black;">&times;</span>
+			</button>
+			<ul>
+				<li th:each="error : ${validationErrors}" th:text="${error.defaultMessage}"></li>
+			</ul>
+		</div>
+		<div>
+			<nav>
+				<a th:href="@{/mainmenu}">Меню</a> > <a th:href="@{/profile/{id}(id=${userProfileForm.id})}">Профиль</a>
+			</nav>
+		</div>
+		<h1>User Profile</h1>
+		<form th:action="@{/profile/refactor/save}" method="post" th:object="${userProfileForm}" th:if="${userProfileForm != null}">
+			<input type="hidden" th:field="*{id}" />
+			<p>Type: <span th:text="${typeUser}"></span></p>
+			<p>
+				Name: <input type="text" th:field="*{name}" />
+			</p>
+			<div th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+			<p>
+				MiddleName: <input type="text" th:field="*{middleName}" />
+			</p>
+			<div th:if="${#fields.hasErrors('middleName')}" th:errors="*{middleName}"></div>
+			<p>
+				LastName: <input type="text" th:field="*{lastName}" />
+			</p>
+			<div th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
+			<p>
+				Email: <input type="email" th:field="*{email}" />
+			</p>
+			<div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+			<p>
+				Password: <input type="password" th:field="*{password}" />
+			</p>
+			<div th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+			<p>
+				Phone Number: <input type="text" th:field="*{phoneNumber}" />
+			</p>
+			<div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+
+			<!--todo сделать отдельное прелставление с таблицей и поиском для изменения компании у клиентов-->
+			<div th:if="${#authentication.authorities.toString().contains('ROLE_ADMIN')}">
+				<div th:if="${typeUser == 'Worker'}">
+					<p>
+						INN: <input type="text" th:field="*{inn}" />
+						<div th:if="${#fields.hasErrors('inn')}" th:errors="*{name}"></div>
+					</p>
+					<p>
+					Salary: <input type="text" th:field="*{salary}" />
+					</p>
+					<p>
+						Position:
+						<select th:field="*{positionS}">
+							<option th:each="pos : ${positions}"
+									th:value="${pos.id}"
+									th:text="${pos.name}"
+									th:selected="${pos.id.equals(userProfileForm.position?.id)}">
+							</option>
+						</select>
+					</p>
+				</div>
+
+				<p>
+					Role:
+					<select th:field="*{roleS}">
+						<option th:each="rol : ${roles}"
+								th:value="${rol.id}"
+								th:text="${rol.name}"
+								th:selected="${rol.id.equals(userProfileForm.role?.id)}">
+						</option>
+					</select>
+				</p>
+			</div>
+
+			<button type="submit">Save</button>
+		</form>
+		<div th:if="${userProfileForm == null}"><h1>Запись не найдена</h1></div>
+	</main>
+</div>
+
+
+<div th:replace="fragments/footer :: footer">&nbsp;</div>
+<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+		crossorigin="anonymous">
+</script>
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+</body>
+</html>

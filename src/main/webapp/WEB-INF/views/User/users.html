@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous">
+    <title>Главная</title>
+    <style>
+        a.navbar-brand {
+          white-space: normal;
+          text-align: center;
+          word-break: break-all;
+        }
+
+        a {
+          color: #0077cc;
+        }
+
+        .btn-primary {
+          color: #fff;
+          background-color: #1b6ec2;
+          border-color: #1861ac;
+        }
+
+        .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+          color: #fff;
+          background-color: #1b6ec2;
+          border-color: #1861ac;
+        }
+
+        .border-top {
+          border-top: 1px solid #e5e5e5;
+        }
+        .border-bottom {
+          border-bottom: 1px solid #e5e5e5;
+        }
+
+        .box-shadow {
+          box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+        }
+
+        button.accept-policy {
+          font-size: 1rem;
+          line-height: inherit.
+        }
+
+        .footer {
+          bottom: 0;
+          width: 100%;
+          white-space: nowrap.
+        }
+
+        .bg-gray {
+          background-color: #888;
+        }
+
+        .smaller-form {
+          width: 40%;
+        }
+
+        .page-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .content {
+            flex: 1;
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <div th:replace="fragments/header :: header">&nbsp;</div>
+</header>
+<div class="container">
+    <main role="main" class="pb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <form th:action="@{/users}" th:object="${searchForm}" method="post" class="smaller-form">
+                    <input type="hidden" name="page" th:value="${usersPage.number}" />
+                    <div class="col-md-6">
+                        <select name="size" class="form-select" onchange="this.form.submit()">
+                            <option th:selected="${size == 5}" th:value="5">5</option>
+                            <option th:selected="${size == 10}" th:value="10">10</option>
+                            <option th:selected="${size == 15}" th:value="15">15</option>
+                            <option th:selected="${size == 20}" th:value="20">20</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" th:field="*{email}" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Имя</label>
+                        <input type="text" class="form-control" id="name" th:field="*{name}" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="middleName" class="form-label">Отчество</label>
+                        <input type="text" class="form-control" id="middleName" th:field="*{middleName}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="lastName" class="form-label">Фамилия</label>
+                        <input type="text" class="form-control" id="lastName" th:field="*{lastName}" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="phoneNumber" class="form-label">Телефон</label>
+                        <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" >
+                    </div>
+                    <div class="mb-3">
+                        <label for="inn" class="form-label">ИНН</label>
+                        <input type="text" class="form-control" id="inn" th:field="*{inn}" >
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="clientCheckbox" th:field="*{client}">
+                        <label class="form-check-label" for="clientCheckbox">Клиент</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="workerCheckbox" th:field="*{worker}">
+                        <label class="form-check-label" for="workerCheckbox">Работник</label>
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="deleteFlagCheckbox" th:field="*{deleteFlag}">
+                        <label class="form-check-label" for="deleteFlagCheckbox">Удаленные аккаунты</label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Поиск</button>
+
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination">
+                            <li th:classappend="${usersPage.first ? 'disabled' : ''}">
+                                <a th:href="@{/users(page=${usersPage.number - 1})}" aria-label="Previous">
+                                    <span aria-hidden="true">«</span>
+                                </a>
+                            </li>
+
+                            <li th:each="i : ${#numbers.sequence(1, usersPage.totalPages)}" th:classappend="${(i - 1) == usersPage.number ? 'active' : ''}">
+                                <a th:href="@{/users(page=${i - 1})}" th:text="${i}"></a>
+                            </li>
+
+                            <li th:classappend="${usersPage.last ? 'disabled' : ''}">
+                                <a th:href="@{/users(page=${usersPage.number + 1})}" aria-label="Next">
+                                    <span aria-hidden="true">»</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                </form>
+            </div>
+            <div class="col-md-8">
+
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th scope="col">Email</th>
+                        <th scope="col">Телефон</th>
+                        <th scope="col">ИНН</th>
+                        <th scope="col">Имя</th>
+                        <th scope="col">Отчество</th>
+                        <th scope="col">Фамилия</th>
+                        <th scope="col">Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="user : ${usersPage.content}">
+                        <td th:text="${#strings.isEmpty(user.email) ? 'Нету' : user.email}"></td>
+                        <td th:text="${#strings.isEmpty(user.phoneNumber) ? 'Нету' : user.phoneNumber}"></td>
+                        <td th:text="${user.type == 'Client' ? '' : (#strings.isEmpty(user.inn) ? 'Нету' : user.inn)}"></td>
+                        <td th:text="${#strings.isEmpty(user.name) ? 'Нету' : user.name}"></td>
+                        <td th:text="${#strings.isEmpty(user.middleName) ? 'Нету' : user.middleName}"></td>
+                        <td th:text="${#strings.isEmpty(user.lastName) ? 'Нету' : user.lastName}"></td>
+                        <td>
+                            <a th:href="@{/profile/{id}(id=${user.id})}" class="btn btn-info">Профиль</a>
+                            <a th:href="@{/createOrder/{id}(id=${user.id})}" class="btn btn-success">Создать заказ</a>
+                            <!--<a th:if="${user.deleteFlag}" th:href="@{/restoreUser/{id}(id=${user.id})}" class="btn btn-warning restore-btn">Восстановить</a>
+                            <a th:unless="${user.deleteFlag}" th:href="@{/deleteUser/{id}(id=${user.id})}" class="btn btn-danger delete-btn">Удалить</a>-->
+                            <a th:unless="${user.deleteFlag}"  th:href="@{/deleteUser/{id}(id=${user.id})}" class="btn btn-danger delete-btn">Удалить</a>
+                            <a th:if="${user.deleteFlag}" th:href="@{/restoreUser/{id}(id=${user.id})}" class="btn btn-warning restore-btn">Восстановить</a>
+
+                        </td>
+                    </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+        <!--<div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <li th:classappend="${usersPage.first ? 'disabled' : ''}">
+                        <a th:href="@{${usersPage.number - 1 >= 0 ? '/users(page=' + (usersPage.number - 1) + ', size=' + usersPage.size + ')' : ''}}" aria-label="Previous">
+                            <span aria-hidden="true">«</span>
+                        </a>
+                    </li>
+
+                    <li th:each="i : ${#numbers.sequence(1, usersPage.totalPages)}" th:classappend="${(i - 1) == usersPage.number ? 'active' : ''}">
+                        <a th:href="@{/users(page=${i - 1}, size=${usersPage.size})}" th:text="${i}"></a>
+                    </li>
+
+                    <li th:classappend="${usersPage.last ? 'disabled' : ''}">
+                        <a th:href="@{${usersPage.number + 1 < usersPage.totalPages ? '/users(page=' + (usersPage.number + 1) + ', size=' + usersPage.size + ')' : ''}}" aria-label="Next">
+                            <span aria-hidden="true">»</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+
+        </div>-->
+    </main>
+</div>
+<div th:replace="fragments/footer :: footer">&nbsp;</div>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous">
+</script>
+<script language="JavaScript" >
+    document.addEventListener('DOMContentLoaded', (event) => {
+		document.querySelectorAll('.delete-btn').forEach(button => {
+			button.addEventListener('click', function(e) {
+				e.preventDefault();
+				const userRow = this.closest('tr');
+				const confirmation = confirm('Вы уверены, что хотите удалить пользователя?');
+				if (confirmation) {
+					fetch(this.getAttribute('href'))
+						.then(response => {
+							if (!response.ok) {
+								throw new Error('Сетевая ошибка');
+							}
+							return response.text();
+						})
+						.then(text => {
+							alert(text);
+							userRow.remove();
+						})
+						.catch(error => {
+							console.error('Ошибка:', error);
+							alert('Произошла ошибка при удалении пользователя');
+						});
+				}
+			});
+		});
+
+		document.querySelectorAll('.restore-btn').forEach(button => {
+			button.addEventListener('click', function(e) {
+				e.preventDefault();
+				const userRow = this.closest('tr');
+				const confirmation = confirm('Вы уверены, что хотите восстановить пользователя?');
+				if (confirmation) {
+					fetch(this.getAttribute('href'))
+						.then(response => {
+							if (!response.ok) {
+								throw new Error('Сетевая ошибка');
+							}
+							return response.text();
+						})
+						.then(text => {
+							alert(text);
+							userRow.remove();
+						})
+						.catch(error => {
+							console.error('Ошибка:', error);
+							alert('Произошла ошибка при восстановлении пользователя');
+						});
+				}
+			});
+		});
+	});
+
+</script>
+</body>
+</html>

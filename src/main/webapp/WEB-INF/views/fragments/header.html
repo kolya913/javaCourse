@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <style>
+        .dropdown-toggle::after {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="header">
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-gray border-bottom box-shadow mb-3">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/}">ADAgency(TODO SVG name)</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row justify-content-between">
+                <ul class="navbar-nav ms-auto me-0">
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link text-dark" th:href="@{/register}">Регистрация</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link text-dark" th:href="@{/login}">Вход</a>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link text-dark" th:href="@{/mainmenu}" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+                                 class="bi bi-person-fill" viewBox="0 0 16 16" style="font-size: 1.5rem;">
+                                <path
+                                        d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/>
+                            </svg>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" th:href="@{/mainmenu}">Профиль</a></li>
+                            <li><a class="dropdown-item" th:href="@{/logout}">Выход</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdownToggle = document.querySelector('.dropdown-toggle');
+        const dropdownMenu = document.querySelector('.dropdown-menu');
+
+
+        dropdownToggle.addEventListener('mouseover', function () {
+            dropdownMenu.style.display = 'block';
+        });
+
+
+        dropdownToggle.addEventListener('mouseout', function () {
+            dropdownMenu.style.display = 'none';
+        });
+    });
+</script>
+</body>
+</html>

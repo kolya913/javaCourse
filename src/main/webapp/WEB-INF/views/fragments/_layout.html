@@ -1,0 +1,19 @@
+<!--TODO написать и подключить общий шаблон чтобы заполнять только main и сделаать блок для уведомления-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Ваш заголовок</title>
+</head>
+<body>
+<header>
+    <div th:replace="fragments/header :: header">&nbsp;</div>
+</header>
+<div class="container">
+    <main role="main" class="pb-3">
+        <div th:replace="~{::mainContent}"></div>
+    </main>
+</div>
+</body>
+</html>
+
