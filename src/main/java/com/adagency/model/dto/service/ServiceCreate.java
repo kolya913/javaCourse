@@ -15,4 +15,8 @@ public class ServiceCreate {
 	private String name;
 	private String description;
 	private List<MediaFileCreate> files;
+
+	public ServiceCreate(Long categoryId){
+		this.categoryId = categoryId;
+	}
 }

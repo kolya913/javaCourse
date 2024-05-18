@@ -12,6 +12,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Service {
 	@Id
 	private Long id;
@@ -21,7 +22,7 @@ public class Service {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
-	
+
 	@ManyToMany
 	@JoinTable(
 			name = "service_mediafile",

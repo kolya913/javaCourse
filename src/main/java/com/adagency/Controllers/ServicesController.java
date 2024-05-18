@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import com.adagency.model.dto.category.CategoryView;
+import com.adagency.model.dto.service.ServiceCreate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -89,16 +90,25 @@ public class ServicesController {
 	@PostMapping("/managecategories/categoryEdit")
 	public String categoryEdit(@ModelAttribute("category") CategoryView categoryView, Model model) {
 		try{
-			model.addAttribute("category", categoryService.updateCategory(categoryView)); //todo сделаь сообщение об ошибке и успехе
+			model.addAttribute("category", categoryService.updateCategory(categoryView)); //todo сделать сообщение об ошибке и успехе
 		}catch (EntityNotFoundException | IOException e){
 			model.addAttribute("error", e.getMessage());
 		}
 		return "Services/editCategory";
 	}
 	
-	@GetMapping("/managecategories/createservice")
-	public String createService(@RequestParam(value = "categoryId", required = false) Long categoryId, Model model) {
-		return "Services/editCategory";
+	@GetMapping("/managecategories/createservice/{id}")
+	public String createService(@PathVariable Long id, Model model) {
+		model.addAttribute("service",new ServiceCreate(id));
+		return "Services/createservice";
+	}
+
+
+	@PostMapping("/managecategories/createservice")
+	public String createService(@ModelAttribute("service") ServiceCreate serviceCreate, Model model) {
+		//model.addAttribute("service",new ServiceCreate(id));
+
+		return "Services/createservice";
 	}
 	
 	
