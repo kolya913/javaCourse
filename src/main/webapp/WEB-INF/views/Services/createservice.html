@@ -69,33 +69,53 @@
 </header>
 <div class="container">
     <main role="main" class="pb-3">
-        <div>
+        <div class="text-center">
             <nav>
                 <a th:href="@{/mainmenu}">Меню</a> > <a th:href="@{/managecategories}">Категории</a> > <a th:href="@{/managecategories/categoryInfo/{id}(id=${service.categoryId})}">Категория</a>
             </nav>
         </div>
 
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form th:action="@{/managecategories/createservice}" method="post" th:object="${service}" enctype="multipart/form-data">
+                    <input type="hidden" th:field="*{categoryId}" />
 
-        <div>
-            <form th:action="@{/managecategories/createservice}" method="post" th:object="${service}" enctype="multipart/form-data">
-                <input type="hidden" th:field="*{categoryId}" />
-                <label for="name">Service Name:</label>
-                <input type="text" id="name" th:field="*{name}" />
+                    <div th:if="${error}" class="alert alert-danger" role="alert">
+                        <p th:text="${error}">Ошибка при заполнении формы</p>
+                    </div>
 
-                <label for="description">Description:</label>
-                <textarea id="description" th:field="*{description}"></textarea>
+                    <div class="form-group">
+                        <label for="name">Service Name:</label>
+                        <input type="text" id="name" th:field="*{name}" class="form-control" />
+                    </div>
 
-                <div th:each="file : ${service.files}">
-                    <label for="file" th:text="${'File ' + file.id}"></label>
-                    <input type="file" id="file" th:field="*{files[__${file.index}__].file}" />
-                </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" th:field="*{description}" class="form-control"></textarea>
+                    </div>
 
-                <button type="submit">Create Service</button>
-            </form>
+                    <div id="mediaFilesContainer" class="form-group">
+                        <div class="mediaFile">
+                            <label for="files0.description">File Description:</label>
+                            <input type="text" id="files0.description" name="files[0].description" class="form-control" />
 
+                            <label for="files0.alt">Alt Text:</label>
+                            <input type="text" id="files0.alt" name="files[0].alt" class="form-control" />
+
+                            <label for="files0.file">File:</label>
+                            <input type="file" id="files0.file" name="files[0].file" class="form-control-file" />
+                        </div>
+                    </div>
+
+                    <button type="button" id="addMediaFileButton" class="btn btn-primary">Add Another Media File</button>
+
+                    <button type="submit" class="btn btn-success">Create Service</button>
+                </form>
+            </div>
         </div>
     </main>
 </div>
+
 
 <div th:replace="fragments/footer :: footer">&nbsp;</div>
 <script
@@ -103,5 +123,37 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous">
 </script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var mediaFilesContainer = document.getElementById('mediaFilesContainer');
+        var addMediaFileButton = document.getElementById('addMediaFileButton');
+        var fileIndex = 1; // Стартовый индекс для следующего MediaFileCreate
+
+        addMediaFileButton.addEventListener('click', function() {
+            var newMediaFileDiv = document.createElement('div');
+            newMediaFileDiv.classList.add('mediaFile', 'mb-3');
+
+            newMediaFileDiv.innerHTML = `
+                <div class="form-group">
+                    <label for="files${fileIndex}.description">File Description:</label>
+                    <input type="text" id="files${fileIndex}.description" name="files[${fileIndex}].description" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="files${fileIndex}.alt">Alt Text:</label>
+                    <input type="text" id="files${fileIndex}.alt" name="files[${fileIndex}].alt" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="files${fileIndex}.file">File:</label>
+                    <input type="file" id="files${fileIndex}.file" name="files[${fileIndex}].file" class="form-control-file" />
+                </div>
+            `;
+            mediaFilesContainer.appendChild(newMediaFileDiv);
+            fileIndex++;
+        });
+    });
+</script>
+
+
 </body>
 </html>

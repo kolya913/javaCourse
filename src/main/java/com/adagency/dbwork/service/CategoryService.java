@@ -119,6 +119,8 @@ public class CategoryService {
         }
     }
 
-
+    public Optional<Category> getCategoryById(long id){
+        return categoryRepository.findById(id);
+    }
 
 }

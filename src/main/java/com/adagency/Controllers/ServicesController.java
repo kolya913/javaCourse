@@ -1,6 +1,7 @@
 package com.adagency.Controllers;
 
 import com.adagency.dbwork.service.CategoryService;
+import com.adagency.dbwork.service.ServiceService;
 import com.adagency.dbwork.service.StatusService;
 import com.adagency.model.dto.category.CategoryCreateDTO;
 
@@ -26,11 +27,14 @@ public class ServicesController {
 
 	private final CategoryService categoryService;
 	private final StatusService statusService;
+	private final ServiceService serviceService;
 	
 	@Autowired
-	public ServicesController(CategoryService categoryService, StatusService statusService){
+	public ServicesController(CategoryService categoryService, StatusService statusService,
+	                          ServiceService serviceService){
 		this.categoryService = categoryService;
 		this.statusService = statusService;
+		this.serviceService = serviceService;
 	}
 	
 	@GetMapping("/managecategories")
@@ -99,15 +103,29 @@ public class ServicesController {
 	
 	@GetMapping("/managecategories/createservice/{id}")
 	public String createService(@PathVariable Long id, Model model) {
-		model.addAttribute("service",new ServiceCreate(id));
+		ServiceCreate serviceCreate = new ServiceCreate();
+		serviceCreate.setCategoryId(id);
+		model.addAttribute("service",serviceCreate);
 		return "Services/createservice";
 	}
 
 
 	@PostMapping("/managecategories/createservice")
-	public String createService(@ModelAttribute("service") ServiceCreate serviceCreate, Model model) {
-		//model.addAttribute("service",new ServiceCreate(id));
-
+	public String createService(@ModelAttribute("service") ServiceCreate serviceCreate, BindingResult result, Model model) {
+		if(result.hasErrors()){
+			model.addAttribute("error","ошибкаresult");
+			model.addAttribute("service",serviceCreate);
+			return "Services/createservice";
+		}
+		
+		//model.addAttribute("error","нетуошибки, колво файлов: " + serviceCreate.getFiles().toArray().length);
+		try {
+			serviceService.CreateService(serviceCreate);
+		} catch (IOException e) {
+			model.addAttribute("error",e.getMessage());
+		} catch (Exception e) {
+			model.addAttribute("error",e.getMessage()); //todo view success or error и переход на страницу с темже categoryid
+		}
 		return "Services/createservice";
 	}
 	

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -15,6 +16,8 @@ import java.util.Set;
 @Entity
 public class Service {
 	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id")
 	private Long id;
 	private String name;
 	private String description;
@@ -29,6 +32,6 @@ public class Service {
 			joinColumns = @JoinColumn(name = "service_id"),
 			inverseJoinColumns = @JoinColumn(name = "mediafile_id")
 	)
-	private Set<MediaFile> mediaFiles;
+	private List<MediaFile> mediaFiles;
 	
 }
