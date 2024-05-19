@@ -4,11 +4,16 @@ import com.adagency.config.MvcConfig;
 import com.adagency.dbwork.jparepo.CategoryRepository;
 import com.adagency.model.dto.category.CategoryCreateDTO;
 import com.adagency.model.dto.category.CategoryView;
+import com.adagency.model.dto.mediafile.MediaFileView;
+import com.adagency.model.dto.service.ServiceView;
+import com.adagency.model.entity.MediaFile;
 import com.adagency.model.entity.Status;
 import com.adagency.model.mapper.category.CategoryMapper;
+import com.adagency.model.mapper.service.ServiceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -27,14 +32,17 @@ public class CategoryService {
     private final CategoryMapper categoryMapper;
     private final MediaFileService mediaFileService;
     private final StatusService statusService;
+    private final ServiceMapper serviceMapper;
     
     @Autowired
     public CategoryService(CategoryRepository categoryRepository, CategoryMapper categoryMapper,
-                           MediaFileService mediaFileService, StatusService statusService){
+                           MediaFileService mediaFileService, StatusService statusService,
+                           ServiceMapper serviceMapper){
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
         this.mediaFileService = mediaFileService;
         this.statusService = statusService;
+        this.serviceMapper = serviceMapper;
     }
     
     @Transactional
@@ -55,7 +63,7 @@ public class CategoryService {
                     + "/" + categoryCreateDTO.getFile().getFile().getOriginalFilename(),
             categoryCreateDTO.getFile().getAlt()));
     }
-
+    
     @Transactional
     public CategoryView getCategoryView(Long id){
         Optional<Category> category = categoryRepository.findById(id);
@@ -67,6 +75,34 @@ public class CategoryService {
             return categoryView;
         }
     }
+    
+    @Transactional
+    public CategoryView getCategoryViewWithServices(Long id) {
+        Optional<Category> category = categoryRepository.findById(id);
+        if (!category.isPresent()) {
+            throw new EntityNotFoundException("CategoryWithId=" + id + "NotFound");
+        } else {
+            CategoryView categoryView = categoryMapper.fromCategoryToCategoryView(category.get());
+            categoryView.setFile(mediaFileService.getMediaFileView(category.get().getPicture()));
+            
+            if (category.get().getServices() != null && !category.get().getServices().isEmpty()) {
+                categoryView.setServices(category.get().getServices().stream().parallel()
+                        .map(service -> {
+                            ServiceView serviceView = serviceMapper.fromServiceToServiceView(service);
+                            if (service.getMediaFiles() != null && !service.getMediaFiles().isEmpty()) {
+                                List<MediaFileView> mediaViews = service.getMediaFiles().stream().parallel()
+                                        .map(mediaFileService::getMediaFileView)
+                                        .collect(Collectors.toList());
+                                serviceView.setMedia(mediaViews);
+                            }
+                            return serviceView;
+                        }).collect(Collectors.toList()));
+            }
+            return categoryView;
+        }
+    }
+    
+    
     
     @Transactional
     public List<CategoryView> getListCategoryView(){

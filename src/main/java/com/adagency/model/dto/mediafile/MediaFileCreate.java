@@ -13,4 +13,5 @@ public class MediaFileCreate {
     private String description;
     private String alt;
     private MultipartFile file;
+    private boolean isMain;
 }

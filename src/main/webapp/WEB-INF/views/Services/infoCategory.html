@@ -122,13 +122,31 @@
 			<div>
 				<div>
 					<nav>
-						 <a th:href="@{/managecategories/createservice/{id}(id=${category.id})}" class="btn btn-info">Создать услугу</a>
+						<a th:href="@{/managecategories/createservice/{id}(id=${category.id})}" class="btn btn-info">Создать услугу</a>
 					</nav>
+				</div>
+				<div class="container">
+					<div class="row">
+						<div th:if="${category.services != null}" th:each="service : ${category.services}" class="col-1">
+							<div class="service-block">
+								<h3 th:text="${service.name}">Название услуги</h3>
+								<div th:if="${service.media != null}" th:each="mediaFile : ${service.media}">
+									<img th:src="@{'/' + ${mediaFile.filePath}}" alt="Изображение услуги" class="img-fluid" />
+								</div>
+								<div class="service-actions">
+									<a th:href="@{/managecategories/editservice/{id}(id=${service.id})}" class="btn btn-primary btn-sm">Редактировать</a>
+									<a th:href="@{/managecategories/deleteservice/{id}(id=${service.id})}" class="btn btn-danger btn-sm">Удалить</a>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 
 			</div>
 
-        </th:block >
+
+
+		</th:block >
 		
 
 	</main>

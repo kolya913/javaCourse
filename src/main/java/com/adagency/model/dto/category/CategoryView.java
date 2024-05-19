@@ -2,6 +2,7 @@ package com.adagency.model.dto.category;
 
 import javax.validation.constraints.Null;
 
+import com.adagency.model.dto.service.ServiceView;
 import com.adagency.model.dto.status.StatusView;
 import com.adagency.model.entity.Service;
 import lombok.AllArgsConstructor;
@@ -32,5 +33,5 @@ public class CategoryView {
     private Date dateCreateAt;
     private Date dateLastUpdate;
     private MediaFileView file;
-    private List<Service> services; //todo dto + add to getCategoryView
+    private List<ServiceView> services;
 }

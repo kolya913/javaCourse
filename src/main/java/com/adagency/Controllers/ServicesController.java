@@ -71,7 +71,7 @@ public class ServicesController {
 	@GetMapping("/managecategories/categoryInfo/{id}")
 	public String categoryInfo(@PathVariable Long id, Model model, HttpSession session) {
 		try{
-		model.addAttribute("category", categoryService.getCategoryView(id));
+		model.addAttribute("category", categoryService.getCategoryViewWithServices(id));
 		}catch (EntityNotFoundException e){
 			throw  new ResponseStatusException(HttpStatus.BAD_REQUEST, "NotFound");
 			//model.addAttribute("error", e.getMessage());
@@ -111,20 +111,22 @@ public class ServicesController {
 
 
 	@PostMapping("/managecategories/createservice")
-	public String createService(@ModelAttribute("service") ServiceCreate serviceCreate, BindingResult result, Model model) {
+	public String createService(@ModelAttribute("service") @Valid ServiceCreate serviceCreate, BindingResult result, Model model) {
 		if(result.hasErrors()){
-			model.addAttribute("error","ошибкаresult");
+			model.addAttribute("error","ошибка result");
 			model.addAttribute("service",serviceCreate);
 			return "Services/createservice";
 		}
 		
-		//model.addAttribute("error","нетуошибки, колво файлов: " + serviceCreate.getFiles().toArray().length);
+
 		try {
 			serviceService.CreateService(serviceCreate);
+			model.addAttribute("service",new ServiceCreate(serviceCreate.getCategoryId()));
+			model.addAttribute("success","Запись создана");
 		} catch (IOException e) {
 			model.addAttribute("error",e.getMessage());
 		} catch (Exception e) {
-			model.addAttribute("error",e.getMessage()); //todo view success or error и переход на страницу с темже categoryid
+			model.addAttribute("error",e.getMessage());
 		}
 		return "Services/createservice";
 	}

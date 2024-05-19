@@ -1,6 +1,7 @@
 package com.adagency.model.mapper.service;
 
 import com.adagency.model.dto.service.ServiceCreate;
+import com.adagency.model.dto.service.ServiceView;
 import com.adagency.model.entity.Service;
 import org.springframework.stereotype.Component;
 
@@ -12,4 +13,16 @@ public class ServiceMapper {
                 .description(serviceCreate.getDescription())
                 .build();
     }
+    
+    public ServiceView fromServiceToServiceView(Service service){
+        return ServiceView.builder()
+                .id(service.getId())
+                .name(service.getName())
+                .description(service.getDescription())
+                .categoryId(service.getCategory().getId())
+                .build();
+    }
+    
+    
+    
 }
