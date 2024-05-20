@@ -49,6 +49,9 @@ public class MediaFile {
     @Column(name = "alt")
     @Length(max=100)
     private String alt;
+
+    @Column(name = "main")
+    private boolean main;
     
 
     @OneToOne(mappedBy = "picture", fetch = FetchType.LAZY)

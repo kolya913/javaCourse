@@ -75,7 +75,7 @@ public class CategoryService {
             return categoryView;
         }
     }
-    
+
     @Transactional
     public CategoryView getCategoryViewWithServices(Long id) {
         Optional<Category> category = categoryRepository.findById(id);
@@ -84,13 +84,14 @@ public class CategoryService {
         } else {
             CategoryView categoryView = categoryMapper.fromCategoryToCategoryView(category.get());
             categoryView.setFile(mediaFileService.getMediaFileView(category.get().getPicture()));
-            
+
             if (category.get().getServices() != null && !category.get().getServices().isEmpty()) {
                 categoryView.setServices(category.get().getServices().stream().parallel()
                         .map(service -> {
                             ServiceView serviceView = serviceMapper.fromServiceToServiceView(service);
                             if (service.getMediaFiles() != null && !service.getMediaFiles().isEmpty()) {
                                 List<MediaFileView> mediaViews = service.getMediaFiles().stream().parallel()
+                                        .filter(mediaFile -> mediaFile.isMain())
                                         .map(mediaFileService::getMediaFileView)
                                         .collect(Collectors.toList());
                                 serviceView.setMedia(mediaViews);
@@ -101,6 +102,7 @@ public class CategoryService {
             return categoryView;
         }
     }
+
     
     
     

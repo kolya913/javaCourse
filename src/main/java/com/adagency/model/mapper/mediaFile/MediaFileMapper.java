@@ -16,6 +16,7 @@ public class MediaFileMapper {
 				.name(mediaFileCreate.getFile().getName())
 				.type(type)
 				.path(path)
+				.main(mediaFileCreate.isMain())
 				.size(mediaFileCreate.getFile().getSize())
 				.createdAt(new Date())
 				.updatedAt(new Date())

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import com.adagency.model.dto.category.CategoryView;
+import com.adagency.model.dto.mediafile.MediaFileCreate;
 import com.adagency.model.dto.service.ServiceCreate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -117,7 +118,16 @@ public class ServicesController {
 			model.addAttribute("service",serviceCreate);
 			return "Services/createservice";
 		}
-		
+
+		long mainFilesCount = serviceCreate.getFiles().stream()
+				.filter(MediaFileCreate::isMain)
+				.count();
+
+		if(mainFilesCount != 1){
+			model.addAttribute("error", "Основных файлов больше 1");
+			model.addAttribute("service",serviceCreate);
+			return "Services/createservice";
+		}
 
 		try {
 			serviceService.CreateService(serviceCreate);
@@ -130,7 +140,10 @@ public class ServicesController {
 		}
 		return "Services/createservice";
 	}
-	
-	
+
+	@GetMapping("/managecategories/infoservice/{id}")
+	public String infoService(@PathVariable Long id, Model model){
+		return "Services/infoservice";
+	}
 	
 }
