@@ -29,6 +29,7 @@ public class MediaFileMapper {
 		return MediaFileView.builder()
 				.fileId(mediaFile.getId())
 				.fileAlt(mediaFile.getAlt())
+				.isMain(mediaFile.isMain())
 				.fileDescription(mediaFile.getDescription())
 				.build();
 	}

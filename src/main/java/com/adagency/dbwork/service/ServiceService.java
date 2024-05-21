@@ -102,6 +102,14 @@ public class ServiceService {
     }
     
 
+    @Transactional
+    public void updateService(ServiceEdit serviceEdit){
+        Optional<Service> service = serviceRepository.findById(serviceEdit.getId());
+        if(!service.isPresent()){
+            throw new EntityNotFoundException("ServiceNotFound");
+        }
+
+    }
 
 
 

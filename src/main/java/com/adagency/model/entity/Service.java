@@ -21,6 +21,7 @@ public class Service {
 	private String name;
 	private String shortDescription;
 	private String description;
+	@Column(name = "deleteFlag")
 	private boolean deleteFlag = false;
 	
 	

@@ -103,18 +103,37 @@
 
 
 				<div class="form-group">
-					<label for="mediaFiles">Медиафайлы:</label>
+					<label>Media Files:</label>
 					<div th:each="mediaFile, iterStat : *{mediaFiles}">
-						<div class="media-file-edit">
-							<img th:src="@{${mediaFile.filePath}}" class="img-thumbnail" th:alt="*{mediaFile.fileAlt}" />
-							<input type="text" th:name="|mediaFiles[${iterStat.index}].fileDescription|" th:value="*{mediaFile.fileDescription}" class="form-control" />
-							<input type="checkbox" th:name="|mediaFiles[${iterStat.index}].isMain|" th:checked="*{mediaFile.isMain}" />
-							<label for="|mediaFiles[${iterStat.index}].isMain|">Основной</label>
-							<input type="file" th:name="|mediaFiles[${iterStat.index}].file|" class="form-control-file" />
+						<div class="media-file">
+							<div class="form-group">
+								<label for="mediaFilePath">File Path:</label>
+								<img th:src="@{'/' + ${mediaFile.filePath}}" class="form-control">
+<!--								<input type="text" id="mediaFilePath" name="mediaFiles[__${iterStat.index}__].filePath" class="form-control" th:value="${mediaFile.filePath}" />-->
+							</div>
+							<div class="form-group">
+								<label for="mediaFileAlt">File Alt:</label>
+								<input type="text" id="mediaFileAlt" name="mediaFiles[__${iterStat.index}__].fileAlt" class="form-control" th:value="${mediaFile.fileAlt}" />
+							</div>
+							<div class="form-group">
+								<label for="mediaFileDescription">File Description:</label>
+								<textarea id="mediaFileDescription" name="mediaFiles[__${iterStat.index}__].fileDescription" class="form-control" th:text="${mediaFile.fileDescription}"></textarea>
+							</div>
+							<div class="form-group">
+								<label for="mediaFileUpload">Upload New File:</label>
+								<input type="file" id="mediaFileUpload" name="mediaFiles[__${iterStat.index}__].file" class="form-control" />
+							</div>
+							<div class="form-group form-check">
+								<input type="checkbox" id="mediaFileMain" name="mediaFiles[__${iterStat.index}__].main" class="form-check-input" th:checked="${mediaFile.main}" />
+								<label class="form-check-label" for="mediaFileMain">Main</label>
+							</div>
+							<div class="form-group form-check">
+								<input type="checkbox" id="mediaFileDeleteFlag" name="mediaFiles[__${iterStat.index}__].deleteFlag" class="form-check-input" th:checked="${mediaFile.deleteFlag}" />
+								<label class="form-check-label" for="mediaFileDeleteFlag">Delete</label>
+							</div>
 						</div>
 					</div>
 				</div>
-
 				<button type="submit" class="btn btn-primary">Сохранить изменения</button>
 			</form>
 		</div>

@@ -12,6 +12,7 @@ import javax.validation.Valid;
 import com.adagency.model.dto.category.CategoryView;
 import com.adagency.model.dto.mediafile.MediaFileCreate;
 import com.adagency.model.dto.service.ServiceCreate;
+import com.adagency.model.dto.service.ServiceEdit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -157,8 +158,19 @@ public class ServicesController {
 	public String editService(@PathVariable Long id, Model model){
 		model.addAttribute("service",serviceService.getServiceEdit(id));
 		model.addAttribute("status", statusService.getAll());
-		return "Services/editService";
+		return "Services/editServices";
 	}
-	
+
+	@PostMapping("/managecategories/editservice")
+	public String editService(@ModelAttribute("service") @Valid  ServiceEdit serviceEdit, BindingResult result,
+							  Model model){
+		if(result.hasErrors()){
+			model.addAttribute("error","result Error");
+			model.addAttribute("service", serviceEdit);
+		}else{
+
+		}
+		return "Services/editServices";
+	}
 	
 }
