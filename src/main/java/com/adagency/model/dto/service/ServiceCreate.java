@@ -21,6 +21,8 @@ public class ServiceCreate {
 	@NotEmpty
 	private String name;
 	@NotEmpty
+	private String shortDescription;
+	@NotEmpty
 	private String description;
 	private List<MediaFileCreate> files;
 	public ServiceCreate(Long categoryId){

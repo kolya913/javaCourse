@@ -51,7 +51,7 @@ public class MediaFile {
     private String alt;
 
     @Column(name = "main")
-    private boolean main;
+    private boolean main = false;
     
 
     @OneToOne(mappedBy = "picture", fetch = FetchType.LAZY)

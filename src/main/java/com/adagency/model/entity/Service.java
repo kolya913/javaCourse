@@ -19,11 +19,20 @@ public class Service {
 	@Column(name = "id")
 	private Long id;
 	private String name;
+	private String shortDescription;
 	private String description;
+	private boolean deleteFlag = false;
+	
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category category;
+	
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "status_id")
+	private Status status;
+	
 
 	@ManyToMany
 	@JoinTable(

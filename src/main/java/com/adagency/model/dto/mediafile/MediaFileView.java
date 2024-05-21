@@ -14,4 +14,6 @@ public class MediaFileView {
 	private String fileDescription;
 	private Long fileId;
 	private MultipartFile file;
+	private boolean isMain = false;
+	private boolean deleteFlag;
 }

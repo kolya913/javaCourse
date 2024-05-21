@@ -55,18 +55,6 @@ public class MediaFileService {
 				type, description, path, alt)
 		);
 		saveFile(mediaFileCreate.getFile(), path);
-		/*File destination = new File(path);
-		if (!destination.getParentFile().exists()) {
-			destination.getParentFile().mkdirs();
-		}
-		try {
-			mediaFileCreate.getFile().transferTo(destination);
-		} catch (IOException e) {
-			if (destination.exists()) {
-				destination.delete();
-			}
-			throw e;
-		}*/
 		return mediaFile;
 	}
 	

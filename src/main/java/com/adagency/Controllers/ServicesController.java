@@ -97,6 +97,8 @@ public class ServicesController {
 		try{
 			model.addAttribute("category", categoryService.updateCategory(categoryView)); //todo сделать сообщение об ошибке и успехе
 		}catch (EntityNotFoundException | IOException e){
+			model.addAttribute("category",categoryView);
+			model.addAttribute("status", statusService.getAll());
 			model.addAttribute("error", e.getMessage());
 		}
 		return "Services/editCategory";
@@ -123,12 +125,16 @@ public class ServicesController {
 				.filter(MediaFileCreate::isMain)
 				.count();
 
-		if(mainFilesCount != 1){
+		if(mainFilesCount > 1){
 			model.addAttribute("error", "Основных файлов больше 1");
 			model.addAttribute("service",serviceCreate);
 			return "Services/createservice";
+		} else if (mainFilesCount == 0) {
+			model.addAttribute("error", "Должен быть выбран хотябы один файл");
+			model.addAttribute("service",serviceCreate);
+			return "Services/createservice";
 		}
-
+		
 		try {
 			serviceService.CreateService(serviceCreate);
 			model.addAttribute("service",new ServiceCreate(serviceCreate.getCategoryId()));
@@ -143,7 +149,16 @@ public class ServicesController {
 
 	@GetMapping("/managecategories/infoservice/{id}")
 	public String infoService(@PathVariable Long id, Model model){
+		model.addAttribute("service",serviceService.getServiceView(id));
 		return "Services/infoservice";
 	}
+	
+	@GetMapping("/managecategories/editservice/{id}")
+	public String editService(@PathVariable Long id, Model model){
+		model.addAttribute("service",serviceService.getServiceEdit(id));
+		model.addAttribute("status", statusService.getAll());
+		return "Services/editService";
+	}
+	
 	
 }

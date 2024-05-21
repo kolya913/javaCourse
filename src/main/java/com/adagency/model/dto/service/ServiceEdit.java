@@ -3,20 +3,24 @@ package com.adagency.model.dto.service;
 import com.adagency.model.dto.mediafile.MediaFileView;
 import com.adagency.model.dto.status.StatusView;
 import lombok.*;
+import org.springframework.lang.Nullable;
 
 import java.util.List;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServiceView {
+@Builder
+public class ServiceEdit {
 	private Long id;
 	private String name;
+	private String shortDescription;
 	private String description;
-	private List<MediaFileView> media;
-	private Long categoryId;
+	private boolean deleteFlag;
 	private StatusView status;
-	//private List<> priceServices //todo price + servicePrice
+	private Long statusId;
+	private List<MediaFileView> mediaFiles;
+	@Nullable
+	private Long categoryId;
 }

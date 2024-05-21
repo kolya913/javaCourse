@@ -90,6 +90,12 @@
                     </div>
 
                     <div class="form-group">
+                        <label for="shortDescription">Description:</label>
+                        <textarea id="shortDescription" th:field="*{shortDescription}" class="form-control"></textarea>
+                    </div>
+
+
+                    <div class="form-group">
                         <label for="description">Description:</label>
                         <textarea id="description" th:field="*{description}" class="form-control"></textarea>
                     </div>
@@ -103,7 +109,8 @@
                             <input type="text" id="files0.alt" name="files[0].alt" class="form-control" />
 
                             <label for="files0.file">File:</label>
-                            <input type="file" id="files0.file" name="files[0].file" class="form-control-file" />
+                            <input type="file" id="files0.file" name="files[0].file"  class="form-control-file" /> <!--fixme название файлов передается из name files[0].file files[1].file -->
+
 
                             <label for="files0.main">Is Main:</label>
                             <input type="checkbox" id="files0.main" name="files[0].main" class="form-check-input" />
@@ -132,7 +139,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         var mediaFilesContainer = document.getElementById('mediaFilesContainer');
         var addMediaFileButton = document.getElementById('addMediaFileButton');
-        var fileIndex = 1; // Стартовый индекс для следующего MediaFileCreate
+        var fileIndex = 1;
 
         addMediaFileButton.addEventListener('click', function() {
             var newMediaFileDiv = document.createElement('div');
