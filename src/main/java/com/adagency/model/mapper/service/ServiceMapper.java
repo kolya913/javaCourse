@@ -46,6 +46,15 @@ public class ServiceMapper {
                 .categoryId(service.getCategory().getId())
                 .build();
     }
+
+
+    public Service updateServiceFromServiceEdit(Service service, ServiceEdit serviceEdit){
+        service.setName(serviceEdit.getName());
+        service.setShortDescription(serviceEdit.getShortDescription());
+        service.setDescription(serviceEdit.getDescription());
+        service.setDeleteFlag(serviceEdit.isDeleteFlag());
+        return service;
+    }
     
     
     

@@ -167,9 +167,11 @@ public class ServicesController {
 		if(result.hasErrors()){
 			model.addAttribute("error","result Error");
 			model.addAttribute("service", serviceEdit);
-		}else{
-
+			return "Services/editServices";
 		}
+
+		serviceService.updateService(serviceEdit);
+
 		return "Services/editServices";
 	}
 	

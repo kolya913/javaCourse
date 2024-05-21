@@ -107,10 +107,9 @@
 					<div th:each="mediaFile, iterStat : *{mediaFiles}">
 						<div class="media-file">
 							<div class="form-group">
-								<label for="mediaFilePath">File Path:</label>
+								<label for="mediaFilePath">Изображение:</label>
 								<img th:src="@{'/' + ${mediaFile.filePath}}" class="form-control">
-<!--								<input type="text" id="mediaFilePath" name="mediaFiles[__${iterStat.index}__].filePath" class="form-control" th:value="${mediaFile.filePath}" />-->
-							</div>
+s							</div>
 							<div class="form-group">
 								<label for="mediaFileAlt">File Alt:</label>
 								<input type="text" id="mediaFileAlt" name="mediaFiles[__${iterStat.index}__].fileAlt" class="form-control" th:value="${mediaFile.fileAlt}" />
@@ -120,7 +119,7 @@
 								<textarea id="mediaFileDescription" name="mediaFiles[__${iterStat.index}__].fileDescription" class="form-control" th:text="${mediaFile.fileDescription}"></textarea>
 							</div>
 							<div class="form-group">
-								<label for="mediaFileUpload">Upload New File:</label>
+								<label for="mediaFileUpload">Загрузить:</label>
 								<input type="file" id="mediaFileUpload" name="mediaFiles[__${iterStat.index}__].file" class="form-control" />
 							</div>
 							<div class="form-group form-check">

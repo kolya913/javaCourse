@@ -2,7 +2,9 @@ package com.adagency.model.mapper.mediaFile;
 
 import com.adagency.model.dto.mediafile.MediaFileCreate;
 import com.adagency.model.dto.mediafile.MediaFileView;
+import com.adagency.model.dto.service.ServiceEdit;
 import com.adagency.model.entity.MediaFile;
+import com.adagency.model.entity.Service;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -33,6 +35,7 @@ public class MediaFileMapper {
 				.fileDescription(mediaFile.getDescription())
 				.build();
 	}
+
 
 	
 }

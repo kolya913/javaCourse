@@ -108,7 +108,7 @@ public class ServiceService {
         if(!service.isPresent()){
             throw new EntityNotFoundException("ServiceNotFound");
         }
-
+        serviceMapper.updateServiceFromServiceEdit(service.get(), serviceEdit);
     }
 
 
