@@ -15,7 +15,7 @@ public class ServicePricing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
-	private Long id;
+	private long id;
 	
 	private String serviceName;
 	
@@ -27,12 +27,16 @@ public class ServicePricing {
 	
 	private int circulation;
 	
-	private String advertisementType;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "service_id")
 	private Service service;
 	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "status_id")
+	private Status status;
+	
+	private long previousId = -1L;
 	
 }
 

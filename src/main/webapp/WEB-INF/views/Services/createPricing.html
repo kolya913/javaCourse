@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+            crossorigin="anonymous">
+    <title>Главная</title>
+    <style>
+        a.navbar-brand {
+            white-space: normal;
+            text-align: center;
+            word-break: break-all;
+        }
+
+        a {
+            color: #0077cc;
+        }
+
+        .btn-primary {
+            color: #fff;
+            background-color: #1b6ec2;
+            border-color: #1861ac;
+        }
+
+        .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+            color: #fff;
+            background-color: #1b6ec2;
+            border-color: #1861ac;
+        }
+
+        .border-top {
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid #e5e5e5;
+        }
+
+        .box-shadow {
+            box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+        }
+
+        button.accept-policy {
+            font-size: 1rem;
+            line-height: inherit;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            white-space: nowrap;
+            line-height: 60px;
+        }
+
+        .bg-gray {
+            background-color: #888; /* Replace with your preferred gray color code */
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div th:replace="fragments/header :: header">&nbsp;</div>
+</header>
+<div class="container">
+    <main role="main" class="pb-3">
+        <div>
+            <nav>
+                <a th:href="@{/mainmenu}">Меню</a> > <a th:href="@{/managecategories}">Категории</a> >
+                <a th:href="@{/managecategories/infoservice/{id}(id=${servicePricing.serviceId})}">Услуга</a>
+            </nav>
+
+        </div>
+
+        <div th:if="${error}">
+            <div class="alert alert-danger">
+                <span th:text="${error}"></span>
+            </div>
+        </div>
+
+        <div>
+
+            <form th:action="@{/managecategories/infoservice/{id}/createpricing(id=${servicePricing.serviceId})}" th:object="${servicePricing}" method="post">
+                <div class="service-pricing-block mb-3 p-3 border rounded">
+                    <input type="text" th:field="*{servicePricingCreateList[0].serviceName}" placeholder="Название услуги" required class="form-control mb-2">
+                    <input type="number" th:field="*{servicePricingCreateList[0].price}" placeholder="Цена" step="0.01" required class="form-control mb-2">
+                    <input type="number" th:field="*{servicePricingCreateList[0].minPeriodInDays}" placeholder="Мин. период (дни)" required class="form-control mb-2">
+                    <input type="number" th:field="*{servicePricingCreateList[0].maxPeriodInDays}" placeholder="Макс. период (дни)" required class="form-control mb-2">
+                    <input type="number" th:field="*{servicePricingCreateList[0].circulation}" placeholder="Тираж" required class="form-control mb-2">
+                </div>
+                <div id="servicePricingBlocks">
+                    <!-- Сюда будут добавляться новые блоки через JavaScript -->
+                </div>
+                <!-- Кнопка для добавления новых элементов будет добавлена здесь -->
+                <button id="addServicePricing" type="button" class="btn btn-primary">Добавить еще услугу</button>
+                <!-- Кнопка для отправки формы -->
+                <button type="submit" class="btn btn-success">Сохранить</button>
+            </form>
+
+
+        </div>
+
+    </main>
+</div>
+
+<div th:replace="fragments/footer :: footer">&nbsp;</div>
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous">
+</script>
+<script language="JavaScript">
+    document.addEventListener('DOMContentLoaded', function() {
+		var index = 0;
+		document.getElementById('addServicePricing').addEventListener('click', function() {
+			var servicePricingBlocks = document.getElementById('servicePricingBlocks');
+			var newBlock = document.createElement('div');
+			newBlock.className = 'service-pricing-block mb-3 p-3 border rounded';
+			newBlock.innerHTML =
+				'<input type="text" name="servicePricingCreateList[' + index + '].serviceName" placeholder="Название услуги" required class="form-control mb-2">' +
+				'<input type="number" name="servicePricingCreateList[' + index + '].price" placeholder="Цена" step="0.01" required class="form-control mb-2">' +
+				'<input type="number" name="servicePricingCreateList[' + index + '].minPeriodInDays" placeholder="Мин. период (дни)" required class="form-control mb-2">' +
+				'<input type="number" name="servicePricingCreateList[' + index + '].maxPeriodInDays" placeholder="Макс. период (дни)" required class="form-control mb-2">' +
+				'<input type="number" name="servicePricingCreateList[' + index + '].circulation" placeholder="Тираж" required class="form-control mb-2">' +
+				'<button type="button" class="btn btn-danger remove-service-pricing">Удалить</button>';
+			servicePricingBlocks.appendChild(newBlock);
+			index++;
+			updateRemoveButtons();
+		});
+
+		function updateRemoveButtons() {
+			document.querySelectorAll('.remove-service-pricing').forEach(function(button) {
+				button.addEventListener('click', function() {
+					var blockToRemove = this.parentNode;
+					servicePricingBlocks.removeChild(blockToRemove);
+					updateIndexes();
+				});
+			});
+		}
+
+		function updateIndexes() {
+			var blocks = document.querySelectorAll('.service-pricing-block');
+			blocks.forEach(function(block, newIndex) {
+				var inputs = block.querySelectorAll('input');
+				inputs.forEach(function(input) {
+					var name = input.name;
+					if(name) {
+						input.name = name.replace(/\[\d+\]/, '[' + newIndex + ']');
+					}
+				});
+			});
+			index = blocks.length;
+		}
+	});
+</script>
+
+</body>
+</html>

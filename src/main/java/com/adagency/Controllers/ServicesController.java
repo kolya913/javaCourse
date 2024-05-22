@@ -15,6 +15,7 @@ import com.adagency.model.dto.mediafile.MediaFileCreate;
 import com.adagency.model.dto.service.ServiceCreate;
 import com.adagency.model.dto.service.ServiceEdit;
 import com.adagency.model.dto.servicepricing.ServicePricingCreate;
+import com.adagency.model.dto.servicepricing.ServicePricingCreateList;
 import jdk.internal.icu.text.NormalizerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -181,7 +182,7 @@ public class ServicesController {
 				Stream.empty();*/
 		
 		if(Stream.concat(
-				serviceEdit.getMediaFiles().stream().filter(mediaFile -> mediaFile.isMain() && !mediaFile.isDeleteFlag()),
+				serviceEdit.getMediaFiles().stream().parallel().filter(mediaFile -> mediaFile.isMain() && !mediaFile.isDeleteFlag()),
 				(serviceEdit.getMediaFileCreates() != null) ?
 						serviceEdit.getMediaFileCreates().stream().filter(MediaFileCreate::isMain) : Stream.empty())
 				.count() != 1){
@@ -206,13 +207,24 @@ public class ServicesController {
 	@GetMapping("/managecategories/infoservice/{id}/createpricing")
 	public String createPricing(@PathVariable Long id, Model model){
 		if(serviceService.checkExsist(id)){
-			ServicePricingCreate servicePricingService = new ServicePricingCreate();
-			servicePricingService.setServiceId(id);
-			model.addAttribute("servicePricing",servicePricingService);
+			ServicePricingCreateList servicePricingCreateList = new ServicePricingCreateList();
+			servicePricingCreateList.setServiceId(id); //todo проверить id
+			model.addAttribute("servicePricing",servicePricingCreateList);
 		}else{
-			model.addAttribute("error","Услугу не найдене с id=" + id);
+			model.addAttribute("error","Услугу не найдена с id=" + id);
 		}
-
+		return "Services/createPricing";
+	}
+	
+	@PostMapping("/managecategories/infoservice/{id}/createpricing")
+	public String createPricing(@PathVariable Long id, @ModelAttribute("servicePricing") ServicePricingCreateList servicePricingCreateList, Model model){
+		if(serviceService.checkExsist(id)){
+			servicePricingCreateList.setServiceId(id); //todo проверить id
+			model.addAttribute("servicePricing",servicePricingCreateList);
+		}else{
+			model.addAttribute("error","Услугу не найдена с id=" + id);
+		}
+		model.addAttribute("test",id);
 		return "Services/createPricing";
 	}
 
