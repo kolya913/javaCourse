@@ -60,7 +60,7 @@ public class MediaFile {
     @OneToOne(mappedBy = "logo", fetch = FetchType.LAZY)
     private Company company;
 
-    @ManyToMany(mappedBy = "mediaFiles")
+    @ManyToMany(mappedBy = "mediaFiles", fetch = FetchType.LAZY)
     private Set<Service> services;
     
 }

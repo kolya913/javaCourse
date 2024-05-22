@@ -3,11 +3,13 @@ package com.adagency.dbwork.service;
 import com.adagency.config.MvcConfig;
 import com.adagency.dbwork.jparepo.ServiceRepository;
 import com.adagency.model.dto.mediafile.MediaFileCreate;
+import com.adagency.model.dto.mediafile.MediaFileView;
 import com.adagency.model.dto.service.ServiceCreate;
 import com.adagency.model.dto.service.ServiceEdit;
 import com.adagency.model.dto.service.ServiceView;
 import com.adagency.model.entity.Category;
 import com.adagency.model.entity.MediaFile;
+import com.adagency.model.entity.Status;
 import com.adagency.model.mapper.service.ServiceMapper;
 import com.adagency.model.mapper.status.StatusMapper;
 import lombok.SneakyThrows;
@@ -103,12 +105,45 @@ public class ServiceService {
     
 
     @Transactional
-    public void updateService(ServiceEdit serviceEdit){
+    public void updateService(ServiceEdit serviceEdit) throws IOException, Exception {
         Optional<Service> service = serviceRepository.findById(serviceEdit.getId());
         if(!service.isPresent()){
             throw new EntityNotFoundException("ServiceNotFound");
         }
+        if(service.get().getStatus().getId() != serviceEdit.getStatusId()){
+            Optional<Status> status = statusService.findById(serviceEdit.getStatusId());
+            if(!status.isPresent()){
+                throw new EntityNotFoundException("StatusNotFound");
+            }else{
+                service.get().setStatus(status.get());
+            }
+        }
         serviceMapper.updateServiceFromServiceEdit(service.get(), serviceEdit);
+        for(MediaFileView mediaFile : serviceEdit.getMediaFiles()){
+            mediaFileService.updateMedFileV(mediaFile);
+        }
+        
+        for(MediaFileCreate mediaFile : serviceEdit.getMediaFileCreates()){
+            service.get().getMediaFiles().add(mediaFileService.testCreateWithTransferFileToPathServer(
+                    mediaFile,
+                    "ServiceMedia",
+                    mediaFile.getDescription(),
+                    MvcConfig.RESOURCE_PATH + "images/Service/" + service.get().getId()
+                            + "/" + mediaFile.getFile().getOriginalFilename(),
+                    mediaFile.getAlt()
+            ));
+        }
+        serviceRepository.save(service.get());
+    }
+    
+    
+    @Transactional
+    public void remmoveService(Long id){
+        Optional<Service> service = serviceRepository.findById(id);
+        if(service.isPresent()){
+          service.get().setDeleteFlag(true);//todo флаг удаления для позиций
+        }
+        throw new EntityNotFoundException("ServiceNotFound");
     }
 
 

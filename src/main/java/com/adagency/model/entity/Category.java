@@ -1,9 +1,6 @@
 package com.adagency.model.entity;
 //todo dto create view error mapper service repo
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -11,9 +8,10 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Data
 @Table(name = "category")
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Category{

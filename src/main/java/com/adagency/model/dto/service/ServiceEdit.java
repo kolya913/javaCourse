@@ -7,6 +7,7 @@ import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -30,7 +31,7 @@ public class ServiceEdit {
 
 	private List<MediaFileView> mediaFiles;
 
-	private List<MediaFileCreate> mediaFileCreates;
+	private List<MediaFileCreate> mediaFileCreates = new ArrayList<>();
 
 	@Nullable
 	private Long categoryId;

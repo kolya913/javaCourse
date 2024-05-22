@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.stream.Stream;
 
 
 @Controller
@@ -156,8 +157,8 @@ public class ServicesController {
 	
 	@GetMapping("/managecategories/editservice/{id}")
 	public String editService(@PathVariable Long id, Model model){
-		model.addAttribute("service",serviceService.getServiceEdit(id));
-		model.addAttribute("status", statusService.getAll());
+		model.addAttribute("service", serviceService.getServiceEdit(id));
+		model.addAttribute("statusList", statusService.getAll());
 		return "Services/editServices";
 	}
 
@@ -169,9 +170,30 @@ public class ServicesController {
 			model.addAttribute("service", serviceEdit);
 			return "Services/editServices";
 		}
+		
+/*		Stream<MediaFileCreate> mediaFileCreatesStream = (serviceEdit.getMediaFileCreates() != null) ?
+				serviceEdit.getMediaFileCreates().stream().filter(MediaFileCreate::isMain) :
+				Stream.empty();*/
+		
+		if(Stream.concat(
+				serviceEdit.getMediaFiles().stream().filter(mediaFile -> mediaFile.isMain() && !mediaFile.isDeleteFlag()),
+				(serviceEdit.getMediaFileCreates() != null) ?
+						serviceEdit.getMediaFileCreates().stream().filter(MediaFileCreate::isMain) : Stream.empty())
+				.count() != 1){
+			model.addAttribute("error","должен быть хотя бы один основной элемент");
+			model.addAttribute("service", serviceEdit);
+			return "Services/editServices";
+		}
 
-		serviceService.updateService(serviceEdit);
-
+		try {
+			serviceService.updateService(serviceEdit);
+			model.addAttribute("error","УСПЕЗХЗ!1!!!!!!1?         Лист создания " + serviceEdit.getMediaFileCreates().toArray().length);
+		}catch (Exception e){
+			model.addAttribute("error", e.getMessage());
+		}
+		
+		model.addAttribute("service",serviceService.getServiceEdit(serviceEdit.getId()));
+		model.addAttribute("statusList", statusService.getAll());
 		return "Services/editServices";
 	}
 	

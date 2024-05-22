@@ -15,7 +15,7 @@ public class MediaFileMapper {
 	public MediaFile createFromMediaFileCreatetoMediaFile(MediaFileCreate mediaFileCreate, String type,
 	                                                      String description, String path, String alt){
 		return MediaFile.builder()
-				.name(mediaFileCreate.getFile().getName())
+				.name(mediaFileCreate.getFile().getOriginalFilename())
 				.type(type)
 				.path(path)
 				.main(mediaFileCreate.isMain())
@@ -34,6 +34,15 @@ public class MediaFileMapper {
 				.isMain(mediaFile.isMain())
 				.fileDescription(mediaFile.getDescription())
 				.build();
+	}
+	
+	
+	public void updateMediaFileFromMediaFileView(MediaFile mediaFile, MediaFileView mediaFileView){
+		mediaFile.setName(mediaFileView.getFile().getOriginalFilename());
+		mediaFile.setDescription(mediaFileView.getFileDescription());
+		mediaFile.setAlt(mediaFileView.getFileAlt());
+		mediaFile.setMain(mediaFileView.isMain());
+		mediaFile.setUpdatedAt(new Date());
 	}
 
 

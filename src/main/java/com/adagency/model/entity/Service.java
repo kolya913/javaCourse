@@ -1,14 +1,13 @@
 package com.adagency.model.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,9 +17,13 @@ public class Service {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
+	@Length(max = 300)
 	private String name;
+	@Length(max = 400)
 	private String shortDescription;
+	@Length(max = 5000)
 	private String description;
+	
 	@Column(name = "deleteFlag")
 	private boolean deleteFlag = false;
 	
@@ -35,12 +38,16 @@ public class Service {
 	private Status status;
 	
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(
 			name = "service_mediafile",
 			joinColumns = @JoinColumn(name = "service_id"),
 			inverseJoinColumns = @JoinColumn(name = "mediafile_id")
 	)
 	private List<MediaFile> mediaFiles;
+	
+	
+	@OneToMany(mappedBy = "service",fetch = FetchType.LAZY)
+	private List<ServicePricing> servicePricings;
 	
 }

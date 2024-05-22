@@ -126,6 +126,37 @@ public class MediaFileService {
 		mediaFile.get().setUpdatedAt(new Date());
 		return mediaFileRepository.save(mediaFile.get());
 	}
+	
+	
+	@Transactional
+	public MediaFile updateMedFileV(MediaFileView mediaFileView)
+			throws IOException, EntityNotFoundException {
+		Optional<MediaFile> mediaFile = mediaFileRepository.findById(mediaFileView.getFileId());
+		if(!mediaFile.isPresent()){
+			throw new EntityNotFoundException("MediaFileNotFound" );
+		}
+		if(mediaFileView.getFile() != null && !mediaFileView.getFile().isEmpty()){
+			File rFile  = new File(mediaFile.get().getPath());
+			String oldFileName = rFile.getName();
+			remove(rFile, false);
+			
+			String regex = "(.*)" + Pattern.quote(oldFileName) + "$";
+			
+			String newFilePath = mediaFile.get().getPath().replaceFirst(regex, "$1" + mediaFileView.getFile().getOriginalFilename());
+			saveFile(mediaFileView.getFile(), newFilePath);
+			
+			mediaFile.get().setPath(newFilePath);
+			mediaFile.get().setSize(mediaFileView.getFile().getSize());
+		}
+		
+		mediaFileMapper.updateMediaFileFromMediaFileView(mediaFile.get(), mediaFileView);
+		if(mediaFile.get().getServices() != null && !mediaFile.get().getServices().isEmpty() && mediaFileView.isDeleteFlag()){
+			File rFile  = new File(mediaFile.get().getPath());
+			remove(rFile,false); //fixme проверка вызывает циклическую проверку hashcode
+		}
+		return mediaFileRepository.save(mediaFile.get());
+	}
+	
 
 
 	public String toRelativePath(String absolutePath) {
