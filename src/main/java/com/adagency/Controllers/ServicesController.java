@@ -1,6 +1,7 @@
 package com.adagency.Controllers;
 
 import com.adagency.dbwork.service.CategoryService;
+import com.adagency.dbwork.service.ServicePricingService;
 import com.adagency.dbwork.service.ServiceService;
 import com.adagency.dbwork.service.StatusService;
 import com.adagency.model.dto.category.CategoryCreateDTO;
@@ -13,6 +14,8 @@ import com.adagency.model.dto.category.CategoryView;
 import com.adagency.model.dto.mediafile.MediaFileCreate;
 import com.adagency.model.dto.service.ServiceCreate;
 import com.adagency.model.dto.service.ServiceEdit;
+import com.adagency.model.dto.servicepricing.ServicePricingCreate;
+import jdk.internal.icu.text.NormalizerBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -31,13 +34,15 @@ public class ServicesController {
 	private final CategoryService categoryService;
 	private final StatusService statusService;
 	private final ServiceService serviceService;
+	private final ServicePricingService servicePricingService;
 	
 	@Autowired
 	public ServicesController(CategoryService categoryService, StatusService statusService,
-	                          ServiceService serviceService){
+	                          ServiceService serviceService, ServicePricingService servicePricingService){
 		this.categoryService = categoryService;
 		this.statusService = statusService;
 		this.serviceService = serviceService;
+		this.servicePricingService = servicePricingService;
 	}
 	
 	@GetMapping("/managecategories")
@@ -196,5 +201,20 @@ public class ServicesController {
 		model.addAttribute("statusList", statusService.getAll());
 		return "Services/editServices";
 	}
-	
+
+
+	@GetMapping("/managecategories/infoservice/{id}/createpricing")
+	public String createPricing(@PathVariable Long id, Model model){
+		if(serviceService.checkExsist(id)){
+			ServicePricingCreate servicePricingService = new ServicePricingCreate();
+			servicePricingService.setServiceId(id);
+			model.addAttribute("servicePricing",servicePricingService);
+		}else{
+			model.addAttribute("error","Услугу не найдене с id=" + id);
+		}
+
+		return "Services/createPricing";
+	}
+
+
 }

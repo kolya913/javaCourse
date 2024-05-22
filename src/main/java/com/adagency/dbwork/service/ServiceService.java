@@ -7,22 +7,18 @@ import com.adagency.model.dto.mediafile.MediaFileView;
 import com.adagency.model.dto.service.ServiceCreate;
 import com.adagency.model.dto.service.ServiceEdit;
 import com.adagency.model.dto.service.ServiceView;
-import com.adagency.model.entity.Category;
 import com.adagency.model.entity.MediaFile;
 import com.adagency.model.entity.Status;
 import com.adagency.model.mapper.service.ServiceMapper;
 import com.adagency.model.mapper.status.StatusMapper;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.adagency.model.entity.Service ;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -147,5 +143,13 @@ public class ServiceService {
     }
 
 
+    public boolean checkExsist(Long id){
+        Optional<Service> service = serviceRepository.findById(id);
+        if(service.isPresent()){
+            return true;
+        }else {
+            return false;
+        }
+    }
 
 }

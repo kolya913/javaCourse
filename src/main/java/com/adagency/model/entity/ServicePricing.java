@@ -10,6 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Entity
 public class ServicePricing {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
