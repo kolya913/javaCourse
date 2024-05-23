@@ -134,7 +134,7 @@ public class ServiceService {
     
     
     @Transactional
-    public void remmoveService(Long id){
+    public void removeService(Long id){
         Optional<Service> service = serviceRepository.findById(id);
         if(service.isPresent()){
           service.get().setDeleteFlag(true);//todo флаг удаления для позиций
@@ -150,6 +150,10 @@ public class ServiceService {
         }else {
             return false;
         }
+    }
+    
+    public Optional<Service> getServiceById(Long id){
+        return serviceRepository.findById(id);
     }
 
 }

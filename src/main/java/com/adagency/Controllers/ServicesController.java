@@ -210,21 +210,18 @@ public class ServicesController {
 			ServicePricingCreateList servicePricingCreateList = new ServicePricingCreateList();
 			servicePricingCreateList.setServiceId(id); //todo проверить id
 			model.addAttribute("servicePricing",servicePricingCreateList);
+			model.addAttribute("statusList",statusService.getAll());
 		}else{
 			model.addAttribute("error","Услугу не найдена с id=" + id);
 		}
 		return "Services/createPricing";
 	}
 	
-	@PostMapping("/managecategories/infoservice/{id}/createpricing")
-	public String createPricing(@PathVariable Long id, @ModelAttribute("servicePricing") ServicePricingCreateList servicePricingCreateList, Model model){
-		if(serviceService.checkExsist(id)){
-			servicePricingCreateList.setServiceId(id); //todo проверить id
-			model.addAttribute("servicePricing",servicePricingCreateList);
-		}else{
-			model.addAttribute("error","Услугу не найдена с id=" + id);
-		}
-		model.addAttribute("test",id);
+	@PostMapping("/managecategories/createpricing")
+	public String createPricing(@ModelAttribute("servicePricing") ServicePricingCreateList servicePricingCreateList, Model model){
+		model.addAttribute("statusList",statusService.getAll());
+		model.addAttribute("testMessage","ok");
+		servicePricingService.createUpdate(servicePricingCreateList);
 		return "Services/createPricing";
 	}
 

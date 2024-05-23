@@ -85,20 +85,24 @@
 
         <div>
 
-            <form th:action="@{/managecategories/infoservice/{id}/createpricing(id=${servicePricing.serviceId})}" th:object="${servicePricing}" method="post">
+            <form th:action="@{/managecategories/createpricing}" th:object="${servicePricing}" method="post">
+                <input type="text" th:field="*{serviceId}" th:value="*{serviceId}" placeholder="Название услуги" required class="form-control mb-2">
                 <div class="service-pricing-block mb-3 p-3 border rounded">
                     <input type="text" th:field="*{servicePricingCreateList[0].serviceName}" placeholder="Название услуги" required class="form-control mb-2">
                     <input type="number" th:field="*{servicePricingCreateList[0].price}" placeholder="Цена" step="0.01" required class="form-control mb-2">
                     <input type="number" th:field="*{servicePricingCreateList[0].minPeriodInDays}" placeholder="Мин. период (дни)" required class="form-control mb-2">
                     <input type="number" th:field="*{servicePricingCreateList[0].maxPeriodInDays}" placeholder="Макс. период (дни)" required class="form-control mb-2">
                     <input type="number" th:field="*{servicePricingCreateList[0].circulation}" placeholder="Тираж" required class="form-control mb-2">
+                    <select th:field="*{servicePricingCreateList[0].statusId}" required class="form-control mb-2">
+                        <option value="" disabled selected>Выберите статус</option>
+                        <th:block th:each="status : ${statusList}">
+                            <option th:value="${status.id}" th:text="${status.name}">Статус</option>
+                        </th:block>
+                    </select>
                 </div>
                 <div id="servicePricingBlocks">
-                    <!-- Сюда будут добавляться новые блоки через JavaScript -->
                 </div>
-                <!-- Кнопка для добавления новых элементов будет добавлена здесь -->
                 <button id="addServicePricing" type="button" class="btn btn-primary">Добавить еще услугу</button>
-                <!-- Кнопка для отправки формы -->
                 <button type="submit" class="btn btn-success">Сохранить</button>
             </form>
 
@@ -116,18 +120,22 @@
 </script>
 <script language="JavaScript">
     document.addEventListener('DOMContentLoaded', function() {
-		var index = 0;
+		var index = 1; // Start from 1 since the first block is already present in the HTML
+		var originalSelect = document.querySelector('.service-pricing-block select').outerHTML;
+
 		document.getElementById('addServicePricing').addEventListener('click', function() {
 			var servicePricingBlocks = document.getElementById('servicePricingBlocks');
 			var newBlock = document.createElement('div');
 			newBlock.className = 'service-pricing-block mb-3 p-3 border rounded';
-			newBlock.innerHTML =
-				'<input type="text" name="servicePricingCreateList[' + index + '].serviceName" placeholder="Название услуги" required class="form-control mb-2">' +
-				'<input type="number" name="servicePricingCreateList[' + index + '].price" placeholder="Цена" step="0.01" required class="form-control mb-2">' +
-				'<input type="number" name="servicePricingCreateList[' + index + '].minPeriodInDays" placeholder="Мин. период (дни)" required class="form-control mb-2">' +
-				'<input type="number" name="servicePricingCreateList[' + index + '].maxPeriodInDays" placeholder="Макс. период (дни)" required class="form-control mb-2">' +
-				'<input type="number" name="servicePricingCreateList[' + index + '].circulation" placeholder="Тираж" required class="form-control mb-2">' +
-				'<button type="button" class="btn btn-danger remove-service-pricing">Удалить</button>';
+			newBlock.innerHTML = `
+				<input type="text" name="servicePricingCreateList[${index}].serviceName" placeholder="Название услуги" required class="form-control mb-2">
+				<input type="number" name="servicePricingCreateList[${index}].price" placeholder="Цена" step="0.01" required class="form-control mb-2">
+				<input type="number" name="servicePricingCreateList[${index}].minPeriodInDays" placeholder="Мин. период (дни)" required class="form-control mb-2">
+				<input type="number" name="servicePricingCreateList[${index}].maxPeriodInDays" placeholder="Макс. период (дни)" required class="form-control mb-2">
+				<input type="number" name="servicePricingCreateList[${index}].circulation" placeholder="Тираж" required class="form-control mb-2">
+				${originalSelect.replace(/\[0\]/g, `[${index}]`)}
+				<button type="button" class="btn btn-danger remove-service-pricing">Удалить</button>
+			`;
 			servicePricingBlocks.appendChild(newBlock);
 			index++;
 			updateRemoveButtons();
@@ -149,14 +157,25 @@
 				var inputs = block.querySelectorAll('input');
 				inputs.forEach(function(input) {
 					var name = input.name;
-					if(name) {
+					if (name) {
 						input.name = name.replace(/\[\d+\]/, '[' + newIndex + ']');
+					}
+				});
+
+				var selects = block.querySelectorAll('select');
+				selects.forEach(function(select) {
+					var name = select.name;
+					if (name) {
+						select.name = name.replace(/\[\d+\]/, '[' + newIndex + ']');
 					}
 				});
 			});
 			index = blocks.length;
 		}
+
+		updateRemoveButtons(); // Initial call to set up event listeners for the existing remove buttons
 	});
+
 </script>
 
 </body>
