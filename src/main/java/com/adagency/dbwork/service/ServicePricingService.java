@@ -2,7 +2,7 @@ package com.adagency.dbwork.service;
 
 import com.adagency.dbwork.jparepo.ServicePricingRepository;
 import com.adagency.model.dto.servicepricing.ServicePricingCreate;
-import com.adagency.model.dto.servicepricing.ServicePricingCreateList;
+import com.adagency.model.dto.servicepricing.ServicePricingCreateEditList;
 import com.adagency.model.entity.Service;
 import com.adagency.model.entity.ServicePricing;
 import com.adagency.model.entity.Status;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,12 +31,12 @@ public class ServicePricingService {
 	}
 	
 	@Transactional
-	public void createUpdate(ServicePricingCreateList servicePricingCreateList) {
-		Optional<Service> service = serviceService.getServiceById(servicePricingCreateList.getServiceId());
+	public void createUpdate(ServicePricingCreateEditList servicePricingCreateEditList) {
+		Optional<Service> service = serviceService.getServiceById(servicePricingCreateEditList.getServiceId());
 		if(!service.isPresent()){
 			throw new EntityNotFoundException("ServiceNotFound");
 		}else{
-			List<ServicePricingCreate> servicePricingCreates = servicePricingCreateList.getServicePricingCreateList();
+			List<ServicePricingCreate> servicePricingCreates = servicePricingCreateEditList.getServicePricingCreateList();
 			for(ServicePricingCreate servicePricingCreate : servicePricingCreates){
 				ServicePricing servicePricing = servicePricingMapper.fromServicePricingCreateToServicePricing(servicePricingCreate);
 				Optional<Status> status = statusService.findById(servicePricingCreate.getStatusId());

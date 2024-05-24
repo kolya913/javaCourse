@@ -11,7 +11,8 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ServicePricingCreateList {
+public class ServicePricingCreateEditList {
 	private Long serviceId;
 	private List<ServicePricingCreate> servicePricingCreateList;
+	private List<ServicePricingEdit> servicePricingEditList;
 }

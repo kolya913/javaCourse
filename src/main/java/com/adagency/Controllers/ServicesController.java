@@ -14,9 +14,7 @@ import com.adagency.model.dto.category.CategoryView;
 import com.adagency.model.dto.mediafile.MediaFileCreate;
 import com.adagency.model.dto.service.ServiceCreate;
 import com.adagency.model.dto.service.ServiceEdit;
-import com.adagency.model.dto.servicepricing.ServicePricingCreate;
-import com.adagency.model.dto.servicepricing.ServicePricingCreateList;
-import jdk.internal.icu.text.NormalizerBase;
+import com.adagency.model.dto.servicepricing.ServicePricingCreateEditList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -204,12 +202,13 @@ public class ServicesController {
 	}
 
 
-	@GetMapping("/managecategories/infoservice/{id}/createpricing")
+	@GetMapping("/managecategories/infoservice/{id}/editpricing")
 	public String createPricing(@PathVariable Long id, Model model){
 		if(serviceService.checkExsist(id)){
-			ServicePricingCreateList servicePricingCreateList = new ServicePricingCreateList();
-			servicePricingCreateList.setServiceId(id); //todo проверить id
-			model.addAttribute("servicePricing",servicePricingCreateList);
+			ServicePricingCreateEditList servicePricingCreateEditList = new ServicePricingCreateEditList();
+			servicePricingCreateEditList.setServiceId(id);
+			servicePricingCreateEditList.setServicePricingEditList(serviceService.getServicesPricingsToEdit(id));
+			model.addAttribute("servicePricing", servicePricingCreateEditList);
 			model.addAttribute("statusList",statusService.getAll());
 		}else{
 			model.addAttribute("error","Услугу не найдена с id=" + id);
@@ -217,11 +216,11 @@ public class ServicesController {
 		return "Services/createPricing";
 	}
 	
-	@PostMapping("/managecategories/createpricing")
-	public String createPricing(@ModelAttribute("servicePricing") ServicePricingCreateList servicePricingCreateList, Model model){
+	@PostMapping("/managecategories/editpricing")
+	public String createPricing(@ModelAttribute("servicePricing") ServicePricingCreateEditList servicePricingCreateEditList, Model model){
 		model.addAttribute("statusList",statusService.getAll());
 		model.addAttribute("testMessage","ok");
-		servicePricingService.createUpdate(servicePricingCreateList);
+		servicePricingService.createUpdate(servicePricingCreateEditList);
 		return "Services/createPricing";
 	}
 

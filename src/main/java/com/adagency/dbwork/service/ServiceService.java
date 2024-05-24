@@ -7,9 +7,11 @@ import com.adagency.model.dto.mediafile.MediaFileView;
 import com.adagency.model.dto.service.ServiceCreate;
 import com.adagency.model.dto.service.ServiceEdit;
 import com.adagency.model.dto.service.ServiceView;
+import com.adagency.model.dto.servicepricing.ServicePricingEdit;
 import com.adagency.model.entity.MediaFile;
 import com.adagency.model.entity.Status;
 import com.adagency.model.mapper.service.ServiceMapper;
+import com.adagency.model.mapper.servicepricingmapper.ServicePricingMapper;
 import com.adagency.model.mapper.status.StatusMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.adagency.model.entity.Service ;
@@ -31,17 +33,19 @@ public class ServiceService {
     private final CategoryService categoryService;
     private final StatusService statusService;
     private final StatusMapper statusMapper;
+    private final ServicePricingMapper servicePricingMapper;
 
     @Autowired
     public ServiceService(ServiceRepository serviceRepository, MediaFileService mediaFileService,
                           ServiceMapper serviceMapper, CategoryService categoryService,
-                          StatusService statusService, StatusMapper statusMapper){
+                          StatusService statusService, StatusMapper statusMapper, ServicePricingMapper servicePricingMapper){
         this.serviceRepository = serviceRepository;
         this.mediaFileService = mediaFileService;
         this.serviceMapper = serviceMapper;
         this.categoryService = categoryService;
         this.statusService = statusService;
         this.statusMapper = statusMapper;
+        this.servicePricingMapper = servicePricingMapper;
     }
 
     @Transactional
@@ -154,6 +158,20 @@ public class ServiceService {
     
     public Optional<Service> getServiceById(Long id){
         return serviceRepository.findById(id);
+    }
+    
+    @Transactional
+    public List<ServicePricingEdit> getServicesPricingsToEdit(Long id){
+        Optional<Service> service = serviceRepository.findById(id);
+        if(!service.isPresent()){
+            throw new EntityNotFoundException("ServiceNotFound");
+        }else{
+            return service.get().getServicePricings().stream().parallel().map(servicePricing -> {
+            ServicePricingEdit servicePricingEdit = servicePricingMapper.fromServicePricingToServicePricingEdit(servicePricing);
+            servicePricingEdit.setStatusView(statusMapper.fromStatusToStatusView(servicePricing.getStatus()));
+            return servicePricingEdit;
+            }).collect(Collectors.toList());
+        }
     }
 
 }
