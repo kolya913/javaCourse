@@ -99,6 +99,28 @@
 				</div>
 			</div>
 		</div>
+		<div>
+			<table>
+				<thead>
+				<tr>
+					<th>Название услуги</th>
+					<th>Цена</th>
+					<th>Мин. период (дни)</th>
+					<th>Макс. период (дни)</th>
+					<th>Тираж</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="pricing : ${service.pricingViewList}">
+					<td th:text="${pricing.serviceName}"></td>
+					<td th:text="${pricing.price}"></td>
+					<td th:text="${pricing.minPeriodInDays}"></td>
+					<td th:text="${pricing.maxPeriodInDays}"></td>
+					<td th:text="${pricing.circulation}"></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
 	</main>
 </div>
 

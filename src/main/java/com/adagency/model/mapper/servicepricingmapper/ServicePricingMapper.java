@@ -2,6 +2,7 @@ package com.adagency.model.mapper.servicepricingmapper;
 
 import com.adagency.model.dto.servicepricing.ServicePricingCreate;
 import com.adagency.model.dto.servicepricing.ServicePricingEdit;
+import com.adagency.model.dto.servicepricing.ServicePricingView;
 import com.adagency.model.entity.ServicePricing;
 import org.springframework.stereotype.Component;
 
@@ -27,4 +28,15 @@ public class ServicePricingMapper {
 				.serPriId(servicePricing.getId())
 				.build();
 	}
+
+	public ServicePricingView fromServicePricingToServicePricingView(ServicePricing servicePricing){
+		return ServicePricingView.builder()
+				.serviceName(servicePricing.getServiceName())
+				.circulation(servicePricing.getCirculation())
+				.maxPeriodInDays(servicePricing.getMaxPeriodInDays())
+				.minPeriodInDays(servicePricing.getMinPeriodInDays())
+				.price(servicePricing.getPrice())
+				.build();
+	}
+
 }

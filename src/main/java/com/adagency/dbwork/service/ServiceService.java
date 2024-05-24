@@ -8,6 +8,7 @@ import com.adagency.model.dto.service.ServiceCreate;
 import com.adagency.model.dto.service.ServiceEdit;
 import com.adagency.model.dto.service.ServiceView;
 import com.adagency.model.dto.servicepricing.ServicePricingEdit;
+import com.adagency.model.dto.servicepricing.ServicePricingView;
 import com.adagency.model.entity.MediaFile;
 import com.adagency.model.entity.Status;
 import com.adagency.model.mapper.service.ServiceMapper;
@@ -83,6 +84,10 @@ public class ServiceService {
                     .collect(Collectors.toList())
             );
             serviceView.setStatus(statusMapper.fromStatusToStatusView(service.get().getStatus()));
+            serviceView.setPricingViewList(service.get().getServicePricings().stream()
+                    .filter(servicePricing -> "Active".equals(servicePricing.getStatus().getName()))
+                    .map(servicePricingMapper::fromServicePricingToServicePricingView)
+                    .collect(Collectors.toList()));
             return serviceView;
         }
         throw new EntityNotFoundException("ServiceNotFound");
