@@ -2,9 +2,13 @@ package com.adagency.model.mapper.category;
 
 import com.adagency.model.dto.category.CategoryCreateDTO;
 import com.adagency.model.dto.category.CategoryView;
+import com.adagency.model.dto.category.ClientCategoryView;
 import com.adagency.model.dto.status.StatusView;
 import com.adagency.model.entity.Category;
+import com.adagency.model.entity.Service;
 import org.springframework.stereotype.Component;
+
+import java.util.stream.Collectors;
 
 @Component
 public class CategoryMapper {
@@ -32,6 +36,14 @@ public class CategoryMapper {
 		category.setDescription(categoryView.getDescription());
 		category.setDeleteFlag(categoryView.getDeleteFlag());
 		return category;
+	}
+	
+	public ClientCategoryView fromCategoryToClientCategoryView(Category category){
+		return ClientCategoryView.builder()
+				.name(category.getName())
+				.description(category.getDescription())
+				.id(category.getId())
+				.build();
 	}
 
 }

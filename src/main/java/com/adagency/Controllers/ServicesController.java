@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
 
@@ -221,6 +222,9 @@ public class ServicesController {
 		model.addAttribute("statusList",statusService.getAll());
 		model.addAttribute("testMessage","ok");
 		servicePricingService.createUpdate(servicePricingCreateEditList);
+		servicePricingCreateEditList.setServiceId(servicePricingCreateEditList.getServiceId());
+		servicePricingCreateEditList.setServicePricingEditList(serviceService.getServicesPricingsToEdit(servicePricingCreateEditList.getServiceId()));
+		servicePricingCreateEditList.setServicePricingCreateList(new ArrayList<>());
 		return "Services/createPricing";
 	}
 

@@ -25,7 +25,7 @@ public class ServicePricing {
 	
 	private int maxPeriodInDays;
 	
-	private int circulation;
+	private int circulation = 0;
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)

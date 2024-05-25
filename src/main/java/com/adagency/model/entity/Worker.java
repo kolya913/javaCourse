@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -21,8 +23,11 @@ public class Worker extends BaseModelPerson {
 	@Column(name = "salary")
 	private int salary;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "position_id")
 	private Position position;
+	
+	@OneToMany(mappedBy = "worker", fetch = FetchType.LAZY)
+	private List<Order> orders = new ArrayList<>();
 
 }

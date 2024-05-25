@@ -26,6 +26,7 @@ public class ServicePricingMapper {
 				.minPeriodInDays(servicePricing.getMinPeriodInDays())
 				.price(servicePricing.getPrice())
 				.serPriId(servicePricing.getId())
+				.statusId(servicePricing.getStatus().getId())
 				.build();
 	}
 
@@ -36,6 +37,24 @@ public class ServicePricingMapper {
 				.maxPeriodInDays(servicePricing.getMaxPeriodInDays())
 				.minPeriodInDays(servicePricing.getMinPeriodInDays())
 				.price(servicePricing.getPrice())
+				.id(servicePricing.getId())
+				.build();
+	}
+	
+	public void fromServicePricingEditToServicePricing(ServicePricingEdit servicePricingEdit, ServicePricing servicePricing){
+		servicePricing.setServiceName(servicePricingEdit.getServiceName());
+		servicePricing.setCirculation(servicePricing.getCirculation());
+		servicePricing.setMinPeriodInDays(servicePricingEdit.getMinPeriodInDays());
+		servicePricing.setMaxPeriodInDays(servicePricingEdit.getMaxPeriodInDays());
+	}
+	
+	public ServicePricing fromServicePricingEditToNewServicePricing(ServicePricingEdit servicePricingEdit){
+		return ServicePricing.builder()
+				.serviceName(servicePricingEdit.getServiceName())
+				.price(servicePricingEdit.getPrice())
+				.minPeriodInDays(servicePricingEdit.getMinPeriodInDays())
+				.maxPeriodInDays(servicePricingEdit.getMaxPeriodInDays())
+				.circulation(servicePricingEdit.getCirculation())
 				.build();
 	}
 

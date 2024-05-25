@@ -2,6 +2,7 @@ package com.adagency.model.mapper.service;
 
 import com.adagency.model.dto.service.ServiceCreate;
 import com.adagency.model.dto.service.ServiceEdit;
+import com.adagency.model.dto.service.ServiceSimpleView;
 import com.adagency.model.dto.service.ServiceView;
 import com.adagency.model.entity.Service;
 import org.springframework.stereotype.Component;
@@ -56,6 +57,12 @@ public class ServiceMapper {
         return service;
     }
     
+    public ServiceSimpleView fromServiceToServiceSimpleView(Service service){
+        return ServiceSimpleView.builder()
+                .id(service.getId())
+                .name(service.getName())
+                .build();
+    }
     
     
 }

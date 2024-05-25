@@ -177,7 +177,7 @@
                         <td th:text="${#strings.isEmpty(user.lastName) ? 'Нету' : user.lastName}"></td>
                         <td>
                             <a th:href="@{/profile/{id}(id=${user.id})}" class="btn btn-info">Профиль</a>
-                            <a th:href="@{/createOrder/{id}(id=${user.id})}" class="btn btn-success">Создать заказ</a>
+                            <a th:href="@{/orders/create/{id}(id=${user.id})}" class="btn btn-success">Создать заказ</a>
                             <!--<a th:if="${user.deleteFlag}" th:href="@{/restoreUser/{id}(id=${user.id})}" class="btn btn-warning restore-btn">Восстановить</a>
                             <a th:unless="${user.deleteFlag}" th:href="@{/deleteUser/{id}(id=${user.id})}" class="btn btn-danger delete-btn">Удалить</a>-->
                             <a th:unless="${user.deleteFlag}"  th:href="@{/deleteUser/{id}(id=${user.id})}" class="btn btn-danger delete-btn">Удалить</a>

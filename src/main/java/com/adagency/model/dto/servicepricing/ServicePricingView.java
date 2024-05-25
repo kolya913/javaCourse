@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ServicePricingView {
+	private Long id;
 	
 	private String serviceName;
 

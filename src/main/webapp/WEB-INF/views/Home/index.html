@@ -61,6 +61,50 @@
         .bg-gray {
             background-color: #888;
         }
+		    .card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+		}
+
+		.card-img-top {
+			height: auto;
+			max-height: 350px;
+			min-height: 200px;
+			width: auto;
+			max-width: 350px;
+			min-width: 200px;
+		}
+
+		@media (min-width: 351px) {
+			.card-img-top {
+				width: 50%;
+		}
+
+		@media (max-width: 199px) {
+			.card-img-top {
+				width: 200px;
+			}
+		}
+
+		@media (min-height: 351px) {
+			.card-img-top {
+				height: 50%;
+			}
+		}
+
+		@media (max-height: 199px) {
+			.card-img-top {
+				height: 200px;
+			}
+		}
+
+		.card-body {
+			flex-grow: 0;
+		}
+		.list-group-item {
+			padding: 0.25rem 1.25rem;
+		}
 	</style>
 </head>
 <body>
@@ -73,7 +117,23 @@
 		<p>Имя пользователя: <span th:text="${#authentication.name}"></span></p>
 		<p>Роли пользователя: <span th:text="${#authentication.authorities}"></span></p>
 		<p>ID пользователя: <span th:text="${#authentication.principal.userId}"></span></p>
-
+		<div class="row">
+			<div th:each="category : ${categories}" class="col-md-4 mb-4 d-flex align-items-stretch">
+				<div class="card">
+					<img th:src="@{'/' + ${category.file.filePath}}" th:alt="${category.file.fileAlt}" class="card-img-top">
+					<div class="card-body">
+						<h5 class="card-title text-center">
+							<a th:href="@{/category/{id}(id=${category.id})}" th:text="${category.name}">Название категории</a>
+						</h5>
+						<ul class="list-group list-group-flush">
+							<li th:each="service : ${category.services}" class="list-group-item">
+								<a th:href="@{/service/{id}(id=${service.id})}" th:text="${service.name}">Услуга</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
 	</main>
 </div>
 

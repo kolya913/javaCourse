@@ -1,7 +1,9 @@
 package com.adagency.Controllers;
 
 import com.adagency.dbwork.service.BaseModelPersonService;
+import com.adagency.dbwork.service.CategoryService;
 import com.adagency.dbwork.service.ClientService;
+import com.adagency.dbwork.service.ServiceService;
 import com.adagency.model.dto.client.ClientRegistrationDTO;
 import com.adagency.model.dto.person.LoginModel;
 import com.adagency.model.entity.BaseModelPerson;
@@ -15,10 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -30,17 +29,23 @@ public class HomeController {
 	private final AuthenticationManager authenticationManager;
 	private final ClientService clientService;
 	private final BaseModelPersonService baseModelPersonService;
+	private final CategoryService categoryService;
+	private final ServiceService serviceService;
 
 	@Autowired
 	public HomeController(AuthenticationManager authenticationManager,ClientService clientService,
-	                      BaseModelPersonService baseModelPersonService) {
+	                      BaseModelPersonService baseModelPersonService, CategoryService categoryService,
+	                      ServiceService serviceService) {
 		this.authenticationManager = authenticationManager;
 		this.clientService = clientService;
 		this.baseModelPersonService =  baseModelPersonService;
+		this.categoryService = categoryService;
+		this.serviceService = serviceService;
 	}
 
 	@GetMapping("/")
 	public String index(Model model) {
+		model.addAttribute("categories",categoryService.getCategoryViewListForClient());
 		return "Home/index";
 	}
 
@@ -129,5 +134,16 @@ public class HomeController {
 		return "redirect:/";
 	}
 
+	@GetMapping("/category/{id}")
+	public String viewCategory(@PathVariable Long id, Model model){
+		model.addAttribute("category", categoryService.getCategoryViewWithServices(id));
+		return "Home/category";
+	}
+	
+	@GetMapping("/service/{id}")
+	public String viewService(@PathVariable Long id, Model model){
+		model.addAttribute("service",serviceService.getServiceView(id));
+		return "Home/service";
+	}
 
 }

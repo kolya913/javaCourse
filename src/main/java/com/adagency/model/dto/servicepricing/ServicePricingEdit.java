@@ -2,27 +2,26 @@ package com.adagency.model.dto.servicepricing;
 
 
 import com.adagency.model.dto.status.StatusView;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ServicePricingEdit {
 	private Long serPriId;
 	
 	private String serviceName;
 	
-	private float price;
+	private Float price;
 	
-	private int minPeriodInDays;
+	private Integer minPeriodInDays;
 	
-	private int maxPeriodInDays;
+	private Integer maxPeriodInDays;
 	
-	private int circulation;
+	private Integer circulation;
 	
 	private StatusView statusView;
+	private Long statusId;
 }

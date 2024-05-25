@@ -63,4 +63,9 @@ public class MediaFile {
     @ManyToMany(mappedBy = "mediaFiles", fetch = FetchType.LAZY)
     private Set<Service> services;
     
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_element_id")
+    private OrderElement orderElement;
+    
 }

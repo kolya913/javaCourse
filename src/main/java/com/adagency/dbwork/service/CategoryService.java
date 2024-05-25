@@ -4,6 +4,7 @@ import com.adagency.config.MvcConfig;
 import com.adagency.dbwork.jparepo.CategoryRepository;
 import com.adagency.model.dto.category.CategoryCreateDTO;
 import com.adagency.model.dto.category.CategoryView;
+import com.adagency.model.dto.category.ClientCategoryView;
 import com.adagency.model.dto.mediafile.MediaFileView;
 import com.adagency.model.dto.service.ServiceView;
 import com.adagency.model.entity.MediaFile;
@@ -108,15 +109,15 @@ public class CategoryService {
     
     @Transactional
     public List<CategoryView> getListCategoryView(){
-        return categoryRepository.findAll().stream()
+        return categoryRepository.findAll().stream().parallel()
                 .map(category -> {
                     CategoryView categoryView = categoryMapper.fromCategoryToCategoryView(category);
                     if(category.getPicture() != null)
-                        categoryView.setFile(mediaFileService.getMediaFileView(category.getPicture())); //fixme refractory to check null
+                        categoryView.setFile(mediaFileService.getMediaFileView(category.getPicture()));
                     return categoryView;
                 })
                 .collect(Collectors.toList());
-    }// todo check parallel
+    }
     
     
     
@@ -161,4 +162,15 @@ public class CategoryService {
         return categoryRepository.findById(id);
     }
 
+    @Transactional
+    public List<ClientCategoryView> getCategoryViewListForClient(){
+        List<Category> categories = categoryRepository.findAllByStatus_Id(1L);
+        return categories.stream().map(category -> {
+            ClientCategoryView clientCategoryView = categoryMapper.fromCategoryToClientCategoryView(category);
+            clientCategoryView.setFile(mediaFileService.getMediaFileView(category.getPicture()));
+            clientCategoryView.setServices(category.getServices().stream().map(serviceMapper::fromServiceToServiceSimpleView).collect(Collectors.toList()));
+            return clientCategoryView;}).collect(Collectors.toList());
+        
+    }
+    
 }
