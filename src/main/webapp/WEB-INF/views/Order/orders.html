@@ -109,10 +109,13 @@
 					<tbody>
 					<tr th:each="order : ${orders}">
 						<td th:text="${order.id}">1</td>
-						<td th:text="${order.worker.name}">Иван Иванов</td>
-						<td th:text="${order.client.name}">ООО 'Рога и Копыта'</td>
+						<td th:text="${order.workerId}">Иван Иванов</td>
+						<td th:text="${order.clientId}">ООО 'Рога и Копыта'</td>
 						<td>
-							<a th:href="@{/order/details(id=${order.id})}" class="btn btn-info btn-sm">Информация</a>
+							<a th:href="@{/order/details/{id}(id=${order.id})}" class="btn btn-info btn-sm">Информация</a>
+							<a th:if="${order.statusId == 1}" th:href="@{/orders/submitCreate/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Доделать заказ</a>
+
+							<a th:if="${order.statusId <= 2}" th:href="@{/orders/delete/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Удалить заказ</a>
 						</td>
 					</tr>
 					</tbody>

@@ -19,10 +19,18 @@ public class OrderElement {
 	private long id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "client_id")
+	@JoinColumn(name = "order_id")
 	private Order order;
+	
+	private String text;
+	
+	private int count = 0;
 	
 	@OneToMany(mappedBy = "orderElement", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<MediaFile> mediaFiles;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "service_pricing_id")
+	private ServicePricing servicePricing;
 	
 }

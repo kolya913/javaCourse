@@ -5,8 +5,11 @@ import com.adagency.dbwork.jparepo.CategoryRepository;
 import com.adagency.model.dto.category.CategoryCreateDTO;
 import com.adagency.model.dto.category.CategoryView;
 import com.adagency.model.dto.category.ClientCategoryView;
+import com.adagency.model.dto.category.ClientSimpleCategory;
 import com.adagency.model.dto.mediafile.MediaFileView;
+import com.adagency.model.dto.service.ServiceSimpleView;
 import com.adagency.model.dto.service.ServiceView;
+import com.adagency.model.dto.servicepricing.ServicePricingView;
 import com.adagency.model.entity.MediaFile;
 import com.adagency.model.entity.Status;
 import com.adagency.model.mapper.category.CategoryMapper;
@@ -81,7 +84,7 @@ public class CategoryService {
     public CategoryView getCategoryViewWithServices(Long id) {
         Optional<Category> category = categoryRepository.findById(id);
         if (!category.isPresent()) {
-            throw new EntityNotFoundException("CategoryWithId=" + id + "NotFound");
+            throw new EntityNotFoundException("CategoryNotFound");
         } else {
             CategoryView categoryView = categoryMapper.fromCategoryToCategoryView(category.get());
             categoryView.setFile(mediaFileService.getMediaFileView(category.get().getPicture()));
@@ -172,5 +175,38 @@ public class CategoryService {
             return clientCategoryView;}).collect(Collectors.toList());
         
     }
+    
+    @Transactional
+    public List<ClientSimpleCategory> getCategoryToPreCreateOrder() {
+        List<Category> categories = categoryRepository.findAllByStatus_Id(1L);
+        
+        return categories.stream().map(category -> {
+            ClientSimpleCategory clientCategory = ClientSimpleCategory.builder()
+                    .id(category.getId())
+                    .name(category.getName())
+                    .clientSimpleCategoryList(
+                            category.getServices().stream().map(service -> {
+                                ServiceSimpleView serviceView = ServiceSimpleView.builder()
+                                        .id(service.getId())
+                                        .name(service.getName())
+                                        .servicePricingViewList(
+                                                service.getServicePricings().stream().map(servicePricing -> {
+                                                    return ServicePricingView.builder()
+                                                            .id(servicePricing.getId())
+                                                            .serviceName(servicePricing.getServiceName())
+                                                            .price(servicePricing.getPrice())
+                                                            .minPeriodInDays(servicePricing.getMinPeriodInDays())
+                                                            .maxPeriodInDays(servicePricing.getMaxPeriodInDays())
+                                                            .circulation(servicePricing.getCirculation())
+                                                            .build();
+                                                }).collect(Collectors.toList())
+                                        ).build();
+                                return serviceView;
+                            }).collect(Collectors.toList())
+                    ).build();
+            return clientCategory;
+        }).collect(Collectors.toList());
+    }
+    
     
 }

@@ -1,10 +1,8 @@
 package com.adagency.config;
 
-import com.adagency.dbwork.service.PositionService;
-import com.adagency.dbwork.service.RoleService;
-import com.adagency.dbwork.service.StatusService;
-import com.adagency.dbwork.service.WorkerService;
+import com.adagency.dbwork.service.*;
 import com.adagency.model.dto.worker.WorkerCreateDTO;
+import com.adagency.model.entity.OrderStatus;
 import com.adagency.model.entity.Position;
 import com.adagency.model.entity.Role;
 import com.adagency.model.entity.Status;
@@ -25,15 +23,18 @@ public class DbInit implements ApplicationListener<ContextRefreshedEvent> {
     private final  PositionService positionService;
     
     private final StatusService statusService;
+    
+    private final OrderStatusService orderStatusService;
 
 
     @Autowired
     public DbInit(RoleService roleService,WorkerService workerService,PositionService positionService,
-                  StatusService statusService) {
+                  StatusService statusService, OrderStatusService orderStatusService) {
         this.roleService = roleService;
         this.workerService = workerService;
         this.positionService = positionService;
         this.statusService = statusService;
+        this.orderStatusService = orderStatusService;
     }
 
     @Override
@@ -65,7 +66,7 @@ public class DbInit implements ApplicationListener<ContextRefreshedEvent> {
         Position position2 = new Position();
         
         if(!positionService.findByName("Администратор").isPresent()){
-            position.setName("Администратор");  //TODO когда будет positionRegisterDTO надо передалать создание должности
+            position.setName("Администратор");
             positionService.save(position);
         }
         
@@ -104,6 +105,12 @@ public class DbInit implements ApplicationListener<ContextRefreshedEvent> {
         
         if(!statusService.findByName("Outdated").isPresent()){
             statusService.create(Status.builder().name("Outdated").build());
+        }
+        
+        if(!orderStatusService.findByName("Forming").isPresent()){
+            OrderStatus orderStatus = new OrderStatus();
+            orderStatus.setName("Forming");
+            orderStatusService.createOrderStatus(orderStatus);
         }
 
     }

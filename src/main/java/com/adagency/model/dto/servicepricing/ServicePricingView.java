@@ -2,9 +2,6 @@ package com.adagency.model.dto.servicepricing;
 
 import lombok.*;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
 @Getter
 @Setter
 @Builder
@@ -22,5 +19,7 @@ public class ServicePricingView {
 	private Integer maxPeriodInDays;
 	
 	private Integer circulation;
+	
+	private Boolean selected = false;
 
 }

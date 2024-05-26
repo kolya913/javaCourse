@@ -77,4 +77,10 @@ public class ServicePricingService {
 			
 		}
 	}
+	
+	
+	public Optional<ServicePricing> getServicePricingById(Long id){
+		return servicePricingRepository.findById(id);
+	}
+	
 }
