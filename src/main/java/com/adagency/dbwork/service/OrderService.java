@@ -53,11 +53,13 @@ public class OrderService {
 	}
 	
 	@Transactional
-	public Long createOrder(OrderCreate orderCreate){
+	public Long createOrder(OrderCreate orderCreate) throws Exception {
 		Optional<Client> client = clientService.findById(orderCreate.getClientId());
 		if(!client.isPresent()){
 			throw new EntityNotFoundException("ClientNotFound");
 		}else{
+			//long existingOrders = orderRepository.countOrdersByClientIdAndOrderStatusId(orderCreate.getClientId());
+			
 			Order order = new Order();
 			order.setClient(client.get());
 			order.setDateCreate(new Date());
@@ -67,6 +69,11 @@ public class OrderService {
 			orderRepository.save(order);
 			return order.getId();
 		}
+	}
+	
+	@Transactional
+	public boolean checkExistOrder(Long clientId){
+		return  orderRepository.existsByClientIdAndOrderStatusId(clientId, 1L);
 	}
 	
 	@Transactional
@@ -91,12 +98,13 @@ public class OrderService {
 	}
 	
 	@Transactional
-	public void createOrderElements(OrderElementCreateList orderElementCreateList){
+	public void createOrderElements(OrderElementCreateList orderElementCreateList) throws Exception {
 		Optional<Order> order = orderRepository.findById(orderElementCreateList.getOrderId());
 		if(!order.isPresent()){
 			throw new EntityNotFoundException("OrderNotFound");
 		}else{
-			List<OrderElementCreate> orderElementCreates = orderElementCreateList.getOrderElementCreateList();
+			orderElementService.createOrderElementByListAfterSubmit(orderElementCreateList.getOrderElementCreateList());
+			order.get().setOrderStatus(orderStatusService.findByName("Created").get());
 		}
 	}
 	

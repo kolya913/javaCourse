@@ -21,6 +21,7 @@ public class Order {
 	
 	private Date dateCreate;
 	
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "worker_id")
 	private Worker worker;
@@ -35,4 +36,5 @@ public class Order {
 	
 	@OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
 	private List<OrderElement> orderElement;
+
 }

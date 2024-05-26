@@ -152,7 +152,7 @@ public class UserController {
                 clientService.findById(userProfileForm.getId()).ifPresent(person ->
                         clientService.update(userProfileForm));
             }
-        }//todo переписать улучшить защиту от изменения данных в форме
+        }
         
         if(role.equals("ROLE_AGENT")){
             workerService.findById(userProfileForm.getId()).ifPresent(person ->{
@@ -180,7 +180,7 @@ public class UserController {
         }
         
         Pageable pageable = PageRequest.of(page, size);
-        Page<BaseModelPerson> usersPage = baseModelPersonService.findUsersByCriteria(form, pageable); // todo dto
+        Page<BaseModelPerson> usersPage = baseModelPersonService.findUsersByCriteria(form, pageable);
         
         model.addAttribute("searchForm", form);
         model.addAttribute("usersPage", usersPage);

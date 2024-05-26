@@ -53,6 +53,7 @@ public class ClientService {
         return clientRepository.findById(id);
     }
 
+    @Transactional
     public UserProfileForm getProfileForm(Long id){
         return clientMapperImpl.fromClientToUserProfileForm(findById(id).get());
     }

@@ -1,7 +1,7 @@
 package com.adagency.model.dto.person;
 
+import com.adagency.model.dto.position.Position;
 import com.adagency.model.entity.Company;
-import com.adagency.model.entity.Position;
 import com.adagency.model.entity.Role;
 import lombok.Builder;
 import lombok.Getter;

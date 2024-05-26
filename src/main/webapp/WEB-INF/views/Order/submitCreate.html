@@ -211,48 +211,70 @@
 </script>
 <script>
 	document.addEventListener('DOMContentLoaded', function() {
-		var formContainer = document.querySelector('.form-container');
+    var formContainer = document.querySelector('.form-container');
 
-		formContainer.addEventListener('click', function(event) {
-			if (event.target.className.includes('btn-file-remove')) {
-				var fileBlock = event.target.closest('.file-block');
-				fileBlock.remove();
-				recalculateIndices();
-			}
-		});
+    formContainer.addEventListener('click', function(event) {
+        if (event.target.className.includes('btn-file-remove')) {
+            var fileBlock = event.target.closest('.file-block');
+            fileBlock.remove();
+            recalculateIndices();
+        }
+    });
 
-		window.addFileFields = function(button) {
-			var fieldset = button.closest('fieldset');
-			var fileInputHtml = '<div class="file-block">' +
-				'<label for="description">Описание файла:</label>' +
-				'<input type="text" name="description" />' +
-				'<label for="alt">Alt текст:</label>' +
-				'<input type="text" name="alt" />' +
-				'<label for="file">Файл:</label>' +
-				'<input type="file" name="file" />' +
-				'<button type="button" class="btn btn-danger btn-file-remove">Удалить</button>' +
-				'</div>';
-			fieldset.insertAdjacentHTML('beforeend', fileInputHtml);
-		};
+    window.addFileFields = function(button) {
+        var fieldset = button.closest('fieldset');
+        var elemStatIndex = Array.from(document.querySelectorAll('fieldset')).indexOf(fieldset);
+        var fileBlocks = fieldset.querySelectorAll('.file-block');
+        var fileStatIndex = fileBlocks.length;
 
-		function recalculateIndices() {
-			var fieldsets = document.querySelectorAll('fieldset');
-			fieldsets.forEach(function(fieldset, fieldsetIndex) {
-				var orderElements = fieldset.querySelectorAll('[th\\:field^="*{orderElementCreateList"]');
-				orderElements.forEach(function(element) {
-					var name = element.getAttribute('th:field');
-					name = name.replace(/\[\d+\]/g, '[' + fieldsetIndex + ']');
-					element.setAttribute('th:field', name);
-				});
-				var files = fieldset.querySelectorAll('[th\\:field^="*{orderElementCreateList[__${elemStat.index}__].file"]');
-				files.forEach(function(file, fileIndex) {
-					var name = file.getAttribute('th:field');
-					name = name.replace(/\[__\$\{fileStat.index\}__\]/g, '[' + fileIndex + ']');
-					file.setAttribute('th:field', name);
-				});
-			});
-		}
-	});
+        var fileInputHtml = '<div class="file-block">' +
+            '<label for="description">Описание файла:</label>' +
+            '<input type="text" name="orderElementCreateList[' + elemStatIndex + '].file[' + fileStatIndex + '].description" />' +
+            '<label for="alt">Alt текст:</label>' +
+            '<input type="text" name="orderElementCreateList[' + elemStatIndex + '].file[' + fileStatIndex + '].alt" />' +
+            '<label for="file">Файл:</label>' +
+            '<input type="file" name="orderElementCreateList[' + elemStatIndex + '].file[' + fileStatIndex + '].file" />' +
+            '<button type="button" class="btn btn-danger btn-file-remove">Удалить</button>' +
+            '</div>';
+        fieldset.insertAdjacentHTML('beforeend', fileInputHtml);
+    };
+
+
+//
+function recalculateIndices() {
+    var fileBlocks = document.querySelectorAll('.file-block');
+    fileBlocks.forEach(function(block, index) {
+        var descriptionInput = block.querySelector('input[name*=".description"]');
+        var altInput = block.querySelector('input[name*=".alt"]');
+        var fileInput = block.querySelector('input[type="file"]');
+
+        if (descriptionInput) {
+            descriptionInput.name = descriptionInput.name.replace(/\[\d+\]\.description$/, '[' + index + '].description');
+        }
+        if (altInput) {
+            altInput.name = altInput.name.replace(/\[\d+\]\.alt$/, '[' + index + '].alt');
+        }
+        if (fileInput) {
+            fileInput.name = fileInput.name.replace(/\[\d+\]\.file$/, '[' + index + '].file');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    var formContainer = document.querySelector('.form-container');
+
+    formContainer.addEventListener('click', function(event) {
+        if (event.target.className.includes('btn-file-remove')) {
+            var fileBlock = event.target.closest('.file-block');
+            fileBlock.remove();
+            recalculateIndices();
+        }
+    });
+});
+
+//
+
+});
 
 </script>
 </body>

@@ -42,6 +42,7 @@ public class BaseModelPersonService {
         return baseModelPersonRepository.findByEmailOrPhoneNumber(email, phoneNumber);
     }
 
+    @Transactional
     public Optional<BaseModelPerson> findById(Long id){
         return baseModelPersonRepository.findById(id);
     }

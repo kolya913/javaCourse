@@ -171,4 +171,9 @@ public class MediaFileService {
 		return mediaFileView;
 	}
 	
+	@Transactional
+	public MediaFile save(MediaFile mediaFile){
+		return mediaFileRepository.save(mediaFile);
+	}
+	
 }

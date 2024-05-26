@@ -49,8 +49,7 @@ public class WorkerService {
     }
 
     public void save(WorkerCreateDTO workerCreateDTO){
-        /*worker.setPassword(bCryptPasswordEncoder.encode(worker.getPassword()));
-        workerRepository.save(worker);*/
+
         Worker worker = workerMapper.fromWorkerCreateDTOTOWorker(workerCreateDTO);
         worker.setPassword(bCryptPasswordEncoder.encode(workerCreateDTO.getPassword()));
         worker.setDateCreate(new Date());
@@ -60,14 +59,6 @@ public class WorkerService {
     
     @Transactional
     public void update(UserProfileForm userProfileForm){
-        /*Optional<Worker> worker = workerRepository.findById(userProfileForm.getId());
-        if(!worker.isPresent()){
-            throw new EntityNotFoundException("Worker с ID " + userProfileForm.getId() + " не найден.");
-        }
-        worker.ifPresent(person ->{
-            workerMapper.fromUserProfileFormToWorker(userProfileForm, person);
-            workerRepository.save(person);
-        } );*/
         workerRepository.findById(userProfileForm.getId()).ifPresentOrElse(person -> {
             workerMapper.fromUserProfileFormToWorker(userProfileForm, person);
             if(userProfileForm.getPositionS() != null & person.getPosition().getId() != userProfileForm.getPositionS()){
@@ -96,21 +87,10 @@ public class WorkerService {
         workerRepository.save(worker);
     }
 
-    public void save(Worker worker, Boolean nopassword){
-        if(nopassword)
-            worker.setPassword(bCryptPasswordEncoder.encode(worker.getPassword()));
-        workerRepository.save(worker); //todo переделать save + dto refactorToUpdate
-    }
 
+    @Transactional
     public UserProfileForm getProfileForm(Long id){
         return workerMapper.fromWorkerToUserProfileForm(workerRepository.findById(id).get());
     }
-
-    public List<Worker> getAll(){
-        return workerRepository.findAll();
-    }
-
-    public Worker convertBaseModelPersonToWorker(BaseModelPerson baseModelPerson) {
-            return (Worker) baseModelPerson;
-    }
+    
 }

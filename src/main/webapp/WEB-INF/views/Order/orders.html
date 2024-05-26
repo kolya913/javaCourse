@@ -80,15 +80,7 @@
 					<a th:href="@{/orders/create/{id}(id=${#authentication.principal.userId})}" class="btn btn-primary">Создать заказ</a>
 				</div>
 
-				<form th:action="@{/search}" method="get">
-					<div class="form-group">
-						<label for="client">Клиент</label>
-						<input type="text" id="client" name="client" class="form-control" placeholder="Имя клиента">
-					</div>
-					<div class="form-group">
-						<label for="worker">Работник</label>
-						<input type="text" id="worker" name="worker" class="form-control" placeholder="Имя работника">
-					</div>
+				<form th:action="@{/search}" method="post">
 					<div class="form-group">
 						<label for="orderNumber">Номер заказа</label>
 						<input type="text" id="orderNumber" name="orderNumber" class="form-control" placeholder="Номер заказа">
@@ -109,10 +101,10 @@
 					<tbody>
 					<tr th:each="order : ${orders}">
 						<td th:text="${order.id}">1</td>
-						<td th:text="${order.workerId}">Иван Иванов</td>
-						<td th:text="${order.clientId}">ООО 'Рога и Копыта'</td>
+						<td th:text="${order.workerId == -1 ? 'не назначен' : order.workerId}"></td>
+						<td th:text="${order.clientId}"></td>
 						<td>
-							<a th:href="@{/order/details/{id}(id=${order.id})}" class="btn btn-info btn-sm">Информация</a>
+							<a th:href="@{/orders/details/{id}(id=${order.id})}" class="btn btn-info btn-sm">Информация</a>
 							<a th:if="${order.statusId == 1}" th:href="@{/orders/submitCreate/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Доделать заказ</a>
 
 							<a th:if="${order.statusId <= 2}" th:href="@{/orders/delete/{id}(id=${order.id})}" class="btn btn-warning btn-sm">Удалить заказ</a>

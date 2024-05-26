@@ -1,6 +1,7 @@
 package com.adagency.model.mapper.worker;
 
 import com.adagency.model.dto.person.UserProfileForm;
+import com.adagency.model.dto.position.Position;
 import com.adagency.model.dto.worker.WorkerCreateDTO;
 import com.adagency.model.entity.Worker;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,7 @@ public class WorkerMapperImpl{
                 .middleName(worker.getMiddleName())
                 .lastName(worker.getLastName())
                 .inn(worker.getInn())
-                .position(worker.getPosition())
+                .position(Position.builder().id(worker.getPosition().getId()).name(worker.getPosition().getName()).build())
                 .role(worker.getRole())
                 .build();
     }

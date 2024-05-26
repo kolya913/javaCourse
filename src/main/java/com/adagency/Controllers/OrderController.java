@@ -2,6 +2,7 @@ package com.adagency.Controllers;
 
 import com.adagency.dbwork.jparepo.CategoryRepository;
 import com.adagency.dbwork.service.CategoryService;
+import com.adagency.dbwork.service.ClientService;
 import com.adagency.dbwork.service.OrderService;
 import com.adagency.model.dto.order.OrderCreate;
 import com.adagency.model.dto.order.OrderElementCreateList;
@@ -19,11 +20,13 @@ public class OrderController {
 
 	private final OrderService orderService;
 	private final CategoryService categoryService;
+	private final ClientService clientService;
 	
 	@Autowired
-	public  OrderController(OrderService orderService, CategoryService categoryService){
+	public  OrderController(OrderService orderService, CategoryService categoryService, ClientService clientService){
 		this.orderService = orderService;
 		this.categoryService = categoryService;
+		this.clientService = clientService;
 	}
 	
 	@GetMapping("/orders")
@@ -34,6 +37,18 @@ public class OrderController {
 	
 	@GetMapping("/orders/create/{id}")
 	public String ordersCreate(@PathVariable Long id, Model model){
+		if(orderService.checkExistOrder(id) || !clientService.findById(id).isPresent()){
+			model.addAttribute("error", "Есть еще не оформленный заказ");
+			model.addAttribute("orders",  orderService.getAll());
+			return "Order/orders";
+		}
+		
+		if(!clientService.findById(id).isPresent()){
+			model.addAttribute("error", "Для создания нужен клиент");
+			model.addAttribute("orders",  orderService.getAll());
+			return "Order/orders";
+		}
+		
 		OrderCreate orderCreate = new OrderCreate();
 		orderCreate.setClientId(id);
 		orderCreate.setClientSimpleCategoryList(categoryService.getCategoryToPreCreateOrder());
@@ -43,10 +58,15 @@ public class OrderController {
 	
 	@PostMapping("/orders/create")
 	public String ordersCreatePost(@ModelAttribute("category") OrderCreate orderCreate, Model model){
-		Long orderId = orderService.createOrder(orderCreate);
-		model.addAttribute("category", orderCreate );
-		model.addAttribute("selectedIds", orderCreate.getSelectedServicePricingIds() );
-		return "redirect:/orders/submitCreate/" + orderId;
+		try {
+			Long orderId = orderService.createOrder(orderCreate);
+			model.addAttribute("category", orderCreate );
+			model.addAttribute("selectedIds", orderCreate.getSelectedServicePricingIds() );
+			return "redirect:/orders/submitCreate/" + orderId;
+		}catch (Exception e){
+			model.addAttribute("error", e.getMessage());
+			return "Order/preCreate";
+		}
 	}
 	
 	@GetMapping("/orders/submitCreate/{id}")
@@ -56,10 +76,16 @@ public class OrderController {
 	}
 	
 	@PostMapping("/orders/submitCreate")
-	public String ordersSubmitCreate(@ModelAttribute("elements")OrderElementCreateList orderElementCreateList, Model model){
+	public String ordersSubmitCreate(@ModelAttribute("elements")OrderElementCreateList orderElementCreateList, Model model) throws Exception {
 		model.addAttribute("elements", orderElementCreateList);
 		orderService.createOrderElements(orderElementCreateList);
-		return "Order/submitCreate";
+		return "redirect:/orders";
+	}
+	
+	@GetMapping("/orders/details/{id}")
+	public String orderDetails(@PathVariable Long id, Model model){
+		
+		return  "Order/orderDetails";
 	}
 
 }

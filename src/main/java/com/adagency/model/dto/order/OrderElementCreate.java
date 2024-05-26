@@ -4,6 +4,7 @@ import com.adagency.model.dto.mediafile.MediaFileCreate;
 import com.adagency.model.dto.servicepricing.ServicePricingView;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -16,5 +17,5 @@ public class OrderElementCreate {
 	private ServicePricingView servicePricingView;
 	private Integer count;
 	private String text;
-	private List<MediaFileCreate> file;
+	private List<MediaFileCreate> file = new ArrayList<>();
 }

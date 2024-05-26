@@ -48,30 +48,37 @@ public class OrderElementService {
 	
 	@Transactional
 	public void createOrderElementByListAfterSubmit(List<OrderElementCreate> orderElementCreates) throws Exception {
-		for(OrderElementCreate orderElementCreate : orderElementCreates){
+		for (OrderElementCreate orderElementCreate : orderElementCreates) {
 			Optional<OrderElement> orderElement = orderElementRepository.findById(orderElementCreate.getOrderElementId());
-			if(!orderElement.isPresent()){
+			if (!orderElement.isPresent()) {
 				throw new EntityNotFoundException("OrderElementNotFound");
-			}else{
+			} else {
 				orderElement.get().setCount(orderElementCreate.getCount());
 				orderElement.get().setText(orderElementCreate.getText());
 				List<MediaFile> mediaFiles = new ArrayList<>();
-				for (MediaFileCreate mediaFileCreate : orderElementCreate.getFile()){
-					mediaFiles.add(mediaFileService.testCreateWithTransferFileToPathServer(
-							mediaFileCreate,
-							"OrderElement",
-							mediaFileCreate.getDescription(),
-							MvcConfig.RESOURCE_PATH + "images/OrderElement/" + orderElement.get().getId()
-									+ "/" + mediaFileCreate.getFile().getOriginalFilename(),
-							mediaFileCreate.getAlt()
-					));
+				if (orderElementCreate.getFile() != null) {
+					for (MediaFileCreate mediaFileCreate : orderElementCreate.getFile()) {
+						if (mediaFileCreate.getFile() != null && !mediaFileCreate.getFile().isEmpty()) {
+							MediaFile mediaFile = (mediaFileService.testCreateWithTransferFileToPathServer(
+									mediaFileCreate,
+									"OrderElement",
+									mediaFileCreate.getDescription(),
+									MvcConfig.RESOURCE_PATH + "images/OrderElement/" + orderElement.get().getId()
+											+ "/" + mediaFileCreate.getFile().getOriginalFilename(),
+									mediaFileCreate.getAlt()
+							));
+							mediaFile.setOrderElement(orderElement.get());
+							mediaFileService.save(mediaFile);
+						}
+					}
 				}
 				orderElement.get().setMediaFiles(mediaFiles);
 				orderElementRepository.save(orderElement.get());
-				//todo доделать
 			}
 		}
 	}
+	
+	
 	
 	
 }

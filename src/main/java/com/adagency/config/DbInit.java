@@ -112,6 +112,12 @@ public class DbInit implements ApplicationListener<ContextRefreshedEvent> {
             orderStatus.setName("Forming");
             orderStatusService.createOrderStatus(orderStatus);
         }
+        
+        if(!orderStatusService.findByName("Created").isPresent()){
+            OrderStatus orderStatus = new OrderStatus();
+            orderStatus.setName("Created");
+            orderStatusService.createOrderStatus(orderStatus);
+        }
 
     }
 }
