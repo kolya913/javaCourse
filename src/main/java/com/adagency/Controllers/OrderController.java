@@ -58,6 +58,7 @@ public class OrderController {
 	@PostMapping("/orders/submitCreate")
 	public String ordersSubmitCreate(@ModelAttribute("elements")OrderElementCreateList orderElementCreateList, Model model){
 		model.addAttribute("elements", orderElementCreateList);
+		orderService.createOrderElements(orderElementCreateList);
 		return "Order/submitCreate";
 	}
 

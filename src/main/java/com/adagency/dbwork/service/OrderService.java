@@ -90,4 +90,14 @@ public class OrderService {
 		}
 	}
 	
+	@Transactional
+	public void createOrderElements(OrderElementCreateList orderElementCreateList){
+		Optional<Order> order = orderRepository.findById(orderElementCreateList.getOrderId());
+		if(!order.isPresent()){
+			throw new EntityNotFoundException("OrderNotFound");
+		}else{
+			List<OrderElementCreate> orderElementCreates = orderElementCreateList.getOrderElementCreateList();
+		}
+	}
+	
 }

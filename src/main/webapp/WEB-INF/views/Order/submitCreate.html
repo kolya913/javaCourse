@@ -152,17 +152,27 @@
 				<input type="hidden" th:field="*{orderId}" />
 				<div th:each="element, elemStat : *{orderElementCreateList}">
 					<fieldset>
-						<legend th:text="'Элемент заказа №' + ${elemStat.index + 1} + ' ' + *{orderElementCreateList[__${elemStat.index}__].servicePricingView.serviceName}">Элемент заказа</legend>\
-						<input type="hidden" th:field="*{orderElementCreateList[__${elemStat.index}__].orderElementId}" />
-						<br>
+						<legend th:text="'Элемент заказа №' + ${elemStat.index + 1} + ' ' + ${element.servicePricingView.serviceName}">Элемент заказа</legend>
 						<div>
-							<label for="servicePricing">Цена услуги:</label>
-							<input type="text" th:field="*{orderElementCreateList[__${elemStat.index}__].servicePricingView.price}" />
+							<span><strong>Название услуги:</strong> <span th:text="${element.servicePricingView.serviceName}"></span></span>
+						</div>
+						<div>
+							<span><strong>Цена услуги:</strong> <span th:text="${element.servicePricingView.price}"></span></span>
+						</div>
+						<div>
+							<span><strong>Минимальный период (дни):</strong> <span th:text="${element.servicePricingView.minPeriodInDays}"></span></span>
+						</div>
+						<div>
+							<span><strong>Максимальный период (дни):</strong> <span th:text="${element.servicePricingView.maxPeriodInDays}"></span></span>
+						</div>
+						<div>
+							<span><strong>Тираж:</strong> <span th:text="${element.servicePricingView.circulation}"></span></span>
 						</div>
 						<div>
 							<label for="count">Количество:</label>
 							<input type="number" th:field="*{orderElementCreateList[__${elemStat.index}__].count}" />
 						</div>
+						<input type="hidden" th:field="*{orderElementCreateList[__${elemStat.index}__].orderElementId}" />
 						<div>
 							<label for="text">Текст:</label>
 							<textarea th:field="*{orderElementCreateList[__${elemStat.index}__].text}"></textarea>
