@@ -47,7 +47,7 @@ public class ServicesController {
 	
 	@GetMapping("/managecategories")
 	public String categories(Model model){
-		model.addAttribute("categories", categoryService.getListCategoryView()); //todo в представление добавить отображение услуг и поиск по ним
+		model.addAttribute("categories", categoryService.getListCategoryView());
 		return "Services/categories";
 	}
 	

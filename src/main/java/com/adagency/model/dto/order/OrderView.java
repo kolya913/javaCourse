@@ -20,5 +20,6 @@ public class OrderView {
 	private Long statusId;
 	private Long workerId;
 	private Long clientId;
+	private Boolean payed;
 	private List<OrderElementView> orderElementViewList;
 }

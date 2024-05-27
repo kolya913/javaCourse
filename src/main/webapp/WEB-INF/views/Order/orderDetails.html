@@ -76,11 +76,24 @@
 		</div>
 		<div class="row">
 			<div th:object="${order}" class="row">
+				<div th:if="${#authorization.expression('hasRole(''AGENT'')')}">
+					<a th:if="${order.statusView.id >= 3}"
+					   th:data-order-id="${order.id}"
+					   href="#"
+					   class="btn btn-warning btn-sm btn-add-to-order">
+						Отправить клиенту файлы по почте
+					</a>
+				</div>
+				<div th:if="${#authorization.expression('hasRole(''CLIENT'')')}">
+					<a th:if="${order.statusView.id == 4}" th:data-order-id="${order.id}" data-order-s="yes"  href="#" class="btn btn-warning btn-sm btn-check-to-order">Согласиться</a>
+					<a th:if="${order.statusView.id == 4}" th:data-order-id="${order.id}" data-order-s="no"  href="#" class="btn btn-warning btn-sm btn-check-to-order">Отказаться</a>
+					<a th:if="${order.statusView.id == 5 && order.payed == false}" th:data-order-id="${order.id}"   href="#" class="btn btn-warning btn-sm btn-pay-order">Оплатить</a>
+				</div>
 				<h2>Детали заказа</h2>
 				<p><strong>ID:</strong> <span th:text="*{id}"></span></p>
 				<p><strong>Работник:</strong>
-					<span th:if="${worker == null}">неназначен</span>
-					<a th:if="${worker != null}" th:href="@{/profile/{id}(id=*{worker.id})}" th:text="*{worker.name}"></a>
+					<span th:if="*{worker == null}">неназначен</span>
+					<a th:if="*{worker != null}" th:href="@{/profile/{id}(id=*{worker.id})}" th:text="*{worker.name}"></a>
 				</p>
 
 				<p><strong>Клиент:</strong> <a th:href="@{/profile/{id}(id=*{client.id})}" th:text="*{client.name}"></a></p>
@@ -96,8 +109,8 @@
 								<div th:if="${element.mediaFileViews != null}">
 									<div th:each="file : ${element.mediaFileViews}" class="mb-2">
 										<span th:text="${file.fileDescription}"></span>
-										<a th:href="@{/downloadFile/{id}(id=${file.fileId})}" class="btn btn-primary">Скачать</a>
-<!--										todo поправить ссылку для скачивания-->
+										<a th:href="@{'/' + ${file.filePath}}" class="btn btn-primary" download>Скачать</a>
+										<!--										todo поправить ссылку для скачивания-->
 									</div>
 								</div>
 							</div>
@@ -105,6 +118,7 @@
 					</div>
 				</div>
 			</div>
+		</div>
 	</main>
 </div>
 
@@ -113,6 +127,98 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		crossorigin="anonymous">
+</script>'
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+
+		document.querySelectorAll('.btn-add-to-order').forEach(function(button) {
+			button.addEventListener('click', function(event) {
+				event.preventDefault();
+
+				var orderId = this.getAttribute('data-order-id');
+
+				fetch('/ADAgency2/orders/sendFiles?orderId=' + orderId, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+				})
+				.then(function(response) {
+					return response.text();
+				})
+				.then(function(text) {
+					alert(text);
+				})
+				.catch(function(error) {
+					console.error('Ошибка:', error);
+				});
+			});
+		});
+	});
+
 </script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+
+		document.querySelectorAll('.btn-check-to-order').forEach(function(button) {
+			button.addEventListener('click', function(event) {
+				event.preventDefault();
+
+				var orderId = this.getAttribute('data-order-id');
+				var answer = this.getAttribute('data-order-s');
+
+				fetch('/ADAgency2/orders/agree?orderId=' + orderId + '&s=' + answer, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+				})
+				.then(function(response) {
+					return response.text();
+				})
+				.then(function(text) {
+					alert(text);
+				})
+				.catch(function(error) {
+					console.error('Ошибка:', error);
+				});
+			});
+		});
+	});
+
+</script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+
+		document.querySelectorAll('.btn-pay-order').forEach(function(button) {
+			button.addEventListener('click', function(event) {
+				event.preventDefault();
+
+				var orderId = this.getAttribute('data-order-id');
+
+				fetch('/ADAgency2/orders/pay?orderId=' + orderId, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+				})
+				.then(function(response) {
+					return response.text();
+				})
+				.then(function(text) {
+					alert(text);
+				})
+				.catch(function(error) {
+					console.error('Ошибка:', error);
+				});
+			});
+		});
+	});
+
+</script>
+
+
 </body>
 </html>

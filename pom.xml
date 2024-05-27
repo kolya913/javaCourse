@@ -192,8 +192,8 @@
 				<version>3.4.0</version>
 				<configuration>
 					<webappDirectory>
-<!--						/home/kolya/Desktop/apache-tomcat-9.0.83/webapps/ADAgency2-->
-						C:\apache-tomcat-9.0.80-windows-x64\apache-tomcat-9.0.80\webapps\ADAgency2
+						/home/kolya/Desktop/apache-tomcat-9.0.83/webapps/ADAgency2
+<!--						C:\apache-tomcat-9.0.80-windows-x64\apache-tomcat-9.0.80\webapps\ADAgency2-->
 					</webappDirectory>
 				</configuration>
 			</plugin>

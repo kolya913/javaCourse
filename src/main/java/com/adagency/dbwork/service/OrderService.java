@@ -38,6 +38,9 @@ public class OrderService {
 	
 	@Autowired
 	private MediaFileService mediaFileService ;
+
+	@Autowired
+	private WorkerService workerService;
 	
 	
 	@Autowired
@@ -150,6 +153,7 @@ public class OrderService {
 		}else {
 			OrderView orderView = new OrderView();
 			orderView.setId(order.get().getId());
+			orderView.setPayed(order.get().isPayed());
 			if(order.get().getWorker()!=null){
 				orderView.setWorker(UserProfileForm.builder()
 						.id(order.get().getWorker().getId() == null ? -1 : order.get().getWorker().getId())
@@ -187,6 +191,62 @@ public class OrderService {
 			}
 			orderView.setOrderElementViewList(orderElementViewList);
 			return orderView;
+		}
+	}
+
+	@Transactional
+	public void addWorkerToOrder(Long orderId, Long workerId){
+		Optional<Worker> worker = workerService.findById(workerId);
+		Optional<Order> order = orderRepository.findById(orderId);
+		if(!worker.isPresent()){
+			throw new EntityNotFoundException("WorkerNotFound");
+		}
+		if(!order.isPresent()){
+			throw new EntityNotFoundException("OrderNotFound");
+		}
+		order.get().setWorker(worker.get());
+		order.get().setOrderStatus(orderStatusService.findByName("Active").get());
+		orderRepository.save(order.get());
+	}
+
+
+	@Transactional
+	public void updateOrderCheck(Long orderId, String status){
+		Optional<Order> order = orderRepository.findById(orderId);
+		if(!order.isPresent()){
+			throw new EntityNotFoundException("OrderNotFound");
+		}else{
+			if(order.get().getOrderStatus().getId() == 3){
+				order.get().setOrderStatus(orderStatusService.findByName("Check").get());
+			}
+
+			if(status != null && !status.isEmpty()){
+				if(status.equals("no")){
+					order.get().setOrderStatus(orderStatusService.findByName("Check").get());
+				}
+
+				if(status.equals("yes")){
+					order.get().setOrderStatus(orderStatusService.findByName("Checked").get());
+				}
+
+			}
+
+
+			orderRepository.save(order.get());
+		}
+	}
+
+	@Transactional
+	public void pay(Long orderId){
+		Optional<Order> order = orderRepository.findById(orderId);
+		if(!order.isPresent()){
+			throw new EntityNotFoundException("OrderNotFound");
+		}else{
+			if(order.get().getOrderStatus().getId() == 5){
+				order.get().setOrderStatus(orderStatusService.findByName("Payed").get());
+				order.get().setPayed(true);
+				orderRepository.save(order.get());
+			}
 		}
 	}
 

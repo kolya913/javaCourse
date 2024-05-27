@@ -20,6 +20,9 @@ public class Order {
 	private long id;
 	
 	private Date dateCreate;
+
+	@Column(name = "payed")
+	private boolean isPayed = false;
 	
 	
 	@ManyToOne(fetch = FetchType.LAZY)

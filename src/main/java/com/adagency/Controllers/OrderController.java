@@ -4,9 +4,11 @@ import com.adagency.dbwork.jparepo.CategoryRepository;
 import com.adagency.dbwork.service.CategoryService;
 import com.adagency.dbwork.service.ClientService;
 import com.adagency.dbwork.service.OrderService;
+import com.adagency.dbwork.service.WorkerService;
 import com.adagency.model.dto.order.OrderCreate;
 import com.adagency.model.dto.order.OrderElementCreateList;
 import com.adagency.model.entity.Category;
+import com.adagency.model.entity.Worker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +16,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 public class OrderController {
 
 	private final OrderService orderService;
 	private final CategoryService categoryService;
 	private final ClientService clientService;
+
+	@Autowired
+	private WorkerService workerService;
 	
 	@Autowired
 	public  OrderController(OrderService orderService, CategoryService categoryService, ClientService clientService){
@@ -105,6 +112,61 @@ public class OrderController {
 		}
 	}
 
+	@PostMapping("/orders/addWorker")
+	@ResponseBody
+	public ResponseEntity<?> addWorker(@RequestParam("workerId") Long workerId, @RequestParam("orderId") Long orderId){
+		try {
+			orderService.addWorkerToOrder(orderId, workerId);
+			return ResponseEntity.ok("Работник успешно добавлена в заказ.");
+		}catch (Exception e){
+			return ResponseEntity
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Произошла ошибка при добавлении работника в заказ.");
+		}
+	}
+
+	@PostMapping("/orders/sendFiles")
+	@ResponseBody
+	public ResponseEntity<?> sendFiles(@RequestParam("orderId") Long orderId){
+		try {
+			orderService.updateOrderCheck(orderId, "");
+			return ResponseEntity.ok("Файлы отправлены");
+		}catch (Exception e){
+			return ResponseEntity
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Ошибка отправки");
+		}
+	}
+
+	@PostMapping("/orders/agree")
+	@ResponseBody
+	public ResponseEntity<?> orderAgree(@RequestParam("orderId") Long orderId, @RequestParam("s") String s){
+		try {
+			orderService.updateOrderCheck(orderId, s);
+			if(s.equals("no") || s.equals("yes")){
+				return ResponseEntity.ok("Принято");
+			}
+			return ResponseEntity.ok("Файлы отправлены");
+		}catch (Exception e){
+			return ResponseEntity
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Ошибка отправки");
+		}
+	}
+
+	@PostMapping("/orders/pay")
+	@ResponseBody
+	public ResponseEntity<?> orderPay(@RequestParam("orderId") Long orderId){
+		try {
+			orderService.pay(orderId);
+
+			return ResponseEntity.ok("Оплачено");
+		}catch (Exception e){
+			return ResponseEntity
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Ошибка отправки");
+		}
+	}
 
 
 }
