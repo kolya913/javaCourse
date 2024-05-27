@@ -77,7 +77,20 @@ public class OrderElementService {
 			}
 		}
 	}
-	
+
+	@Transactional
+	public OrderElement addOrderElementToOrder(Long pricingId, Order order){
+		Optional<ServicePricing> servicePricing = servicePricingService.getServicePricingById(pricingId);
+		if(!servicePricing.isPresent()){
+			throw new EntityNotFoundException("ServicePricingNotFound");
+		}else{
+			OrderElement orderElement = new OrderElement();
+			orderElement.setServicePricing(servicePricing.get());
+			orderElement.setOrder(order);
+			orderElementRepository.save(orderElement);
+			return orderElement;
+		}
+	}
 	
 	
 	

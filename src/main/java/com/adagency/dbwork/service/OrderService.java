@@ -12,6 +12,7 @@ import com.adagency.model.entity.Client;
 import com.adagency.model.entity.Order;
 import com.adagency.model.entity.OrderElement;
 import com.adagency.model.mapper.servicepricingmapper.ServicePricingMapper;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -105,7 +106,34 @@ public class OrderService {
 		}else{
 			orderElementService.createOrderElementByListAfterSubmit(orderElementCreateList.getOrderElementCreateList());
 			order.get().setOrderStatus(orderStatusService.findByName("Created").get());
+			orderRepository.save(order.get());
 		}
 	}
-	
+
+	@Transactional
+	public void addToOrder(Long pricingId, Long userId) throws EntityNotFoundException{
+		List<Order> orders = orderRepository.findByClientIdAndOrderStatusId(userId, 1L);
+		Optional<Client> client = clientService.findById(userId);
+		if(!client.isPresent()){
+			throw new EntityNotFoundException("ClientNotFound");
+		}
+		if(orders.isEmpty()){
+			Order order = new Order();
+			order.setClient(client.get());
+			order.setDateCreate(new Date());
+			orderRepository.save(order);
+			List<OrderElement> orderElements = new ArrayList<>();
+			orderElements.add(orderElementService.addOrderElementToOrder(pricingId, order));
+			order.setOrderElement(orderElements);
+			order.setOrderStatus(orderStatusService.findByName("Forming").get());
+			orderRepository.save(order);
+		}else {
+			Order order = orders.get(0);
+			List<OrderElement> orderElements = order.getOrderElement();
+			orderElements.add(orderElementService.addOrderElementToOrder(pricingId, order));
+			order.setOrderElement(orderElements);
+			orderRepository.save(order);
+		}
+	}
+
 }

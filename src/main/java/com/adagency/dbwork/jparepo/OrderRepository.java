@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
 	boolean existsByClientIdAndOrderStatusId(Long clientId, Long orderStatusId);
+	List<Order> findByClientIdAndOrderStatusId(Long clientId, Long orderStatusId);
 }
