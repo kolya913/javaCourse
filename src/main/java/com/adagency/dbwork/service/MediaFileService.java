@@ -152,7 +152,7 @@ public class MediaFileService {
 		mediaFileMapper.updateMediaFileFromMediaFileView(mediaFile.get(), mediaFileView);
 		if(mediaFile.get().getServices() != null && !mediaFile.get().getServices().isEmpty() && mediaFileView.isDeleteFlag()){
 			File rFile  = new File(mediaFile.get().getPath());
-			remove(rFile,false); //fixme проверка вызывает циклическую проверку hashcode
+			remove(rFile,false);
 		}
 		return mediaFileRepository.save(mediaFile.get());
 	}

@@ -8,6 +8,8 @@ import com.adagency.model.dto.order.OrderCreate;
 import com.adagency.model.dto.order.OrderElementCreateList;
 import com.adagency.model.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -81,19 +83,28 @@ public class OrderController {
 	
 	@GetMapping("/orders/details/{id}")
 	public String orderDetails(@PathVariable Long id, Model model){
-		
+		model.addAttribute("order", orderService.getOrderViewForDetails(id));
 		return  "Order/orderDetails";
 	}
-
+	
 	@PostMapping("/addtoorder")
-	public String addToOrder(@RequestParam("pricingId") Long pricingId, @RequestParam("userId") Long userId) {
-		try {
-			orderService.addToOrder(pricingId,userId);
-		}catch (Exception e){
-
+	@ResponseBody
+	public ResponseEntity<?> addToOrder(@RequestParam("pricingId") Long pricingId, @RequestParam("userId") Long userId) {
+		if (userId == -1) {
+			return ResponseEntity
+					.status(HttpStatus.UNAUTHORIZED)
+					.body("Необходимо войти в аккаунт или зарегистрироваться, чтобы добавить услугу в заказ.");
 		}
-		return "Home/service";
+		try {
+			orderService.addToOrder(pricingId, userId);
+			return ResponseEntity.ok("Услуга успешно добавлена в заказ.");
+		} catch (Exception e) {
+			return ResponseEntity
+					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.body("Произошла ошибка при добавлении услуги в заказ.");
+		}
 	}
+
 
 
 }

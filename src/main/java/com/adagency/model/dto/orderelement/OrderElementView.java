@@ -1,7 +1,6 @@
 package com.adagency.model.dto.orderelement;
 
 import com.adagency.model.dto.mediafile.MediaFileView;
-import com.adagency.model.dto.status.StatusView;
 import lombok.*;
 
 import java.util.List;
@@ -15,5 +14,7 @@ public class OrderElementView {
 	private Long id;
 	private Integer count;
 	private String text;
+	private String serviceName;
+	private Long serviceId;
 	private List<MediaFileView> mediaFileViews;
 }

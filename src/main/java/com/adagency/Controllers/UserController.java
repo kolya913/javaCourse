@@ -63,7 +63,7 @@ public class UserController {
     }
     
     
-    @GetMapping("/profile/{id}") //todo улучшить метод
+    @GetMapping("/profile/{id}")
     public String profile(@PathVariable Long id, Model model, Authentication authentication) {
         CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
         Long currentUserId = currentUser.getUserId();

@@ -2,15 +2,17 @@ package com.adagency.dbwork.service;
 
 import com.adagency.dbwork.jparepo.OrderRepository;
 import com.adagency.model.dto.category.ClientSimpleCategory;
+import com.adagency.model.dto.mediafile.MediaFileView;
 import com.adagency.model.dto.order.OrderCreate;
 import com.adagency.model.dto.order.OrderElementCreate;
 import com.adagency.model.dto.order.OrderElementCreateList;
 import com.adagency.model.dto.order.OrderView;
+import com.adagency.model.dto.orderelement.OrderElementView;
+import com.adagency.model.dto.person.UserProfileForm;
 import com.adagency.model.dto.service.ServiceSimpleView;
 import com.adagency.model.dto.servicepricing.ServicePricingView;
-import com.adagency.model.entity.Client;
-import com.adagency.model.entity.Order;
-import com.adagency.model.entity.OrderElement;
+import com.adagency.model.dto.status.StatusView;
+import com.adagency.model.entity.*;
 import com.adagency.model.mapper.servicepricingmapper.ServicePricingMapper;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,10 @@ public class OrderService {
 	
 	@Autowired
 	private OrderElementService orderElementService ;
+	
+	@Autowired
+	private MediaFileService mediaFileService ;
+	
 	
 	@Autowired
 	public OrderService(OrderRepository orderRepository, ClientService clientService,
@@ -133,6 +139,54 @@ public class OrderService {
 			orderElements.add(orderElementService.addOrderElementToOrder(pricingId, order));
 			order.setOrderElement(orderElements);
 			orderRepository.save(order);
+		}
+	}
+	
+	@Transactional
+	public OrderView getOrderViewForDetails(Long id){
+		Optional<Order> order = orderRepository.findById(id);
+		if(!order.isPresent()){
+			throw new EntityNotFoundException("OrderNotFound");
+		}else {
+			OrderView orderView = new OrderView();
+			orderView.setId(order.get().getId());
+			if(order.get().getWorker()!=null){
+				orderView.setWorker(UserProfileForm.builder()
+						.id(order.get().getWorker().getId() == null ? -1 : order.get().getWorker().getId())
+						.name(order.get().getWorker().getName() == null ? null : order.get().getWorker().getName())
+						.lastName(order.get().getWorker().getLastName() == null ? null : order.get().getWorker().getLastName())
+						.build());
+				orderView.setWorkerId(order.get().getWorker().getId());
+			}
+			
+			orderView.setClient(UserProfileForm.builder()
+					.id(order.get().getClient().getId() == null ? -1 : order.get().getClient().getId())
+					.name(order.get().getClient().getName() == null ? null : order.get().getClient().getName())
+					.lastName(order.get().getClient().getLastName() == null ? null : order.get().getClient().getLastName())
+					.build());
+			orderView.setClientId(order.get().getClient().getId());
+			orderView.setStatusView(StatusView.builder().id(order.get().getOrderStatus().getId()).name(order.get().getOrderStatus().getName()).build());
+			List<OrderElementView> orderElementViewList = new ArrayList<>();
+			if(order.get().getOrderElement() != null){
+				for(OrderElement orderElement : order.get().getOrderElement()){
+					OrderElementView orderElementView = new OrderElementView();
+					orderElementView.setCount(orderElement.getCount());
+					orderElementView.setText(orderElement.getText());
+					orderElementView.setServiceId(orderElement.getServicePricing().getId());
+					orderElementView.setServiceName(orderElement.getServicePricing().getServiceName());
+					/*List<MediaFileView> mediaFileViews = new ArrayList<>();
+					for(MediaFile mediaFile : orderElement.getMediaFiles()){
+						mediaFileViews.add(mediaFileService.getMediaFileView(mediaFile));
+					}*/
+					orderElementView.setMediaFileViews(orderElement.getMediaFiles().stream()
+							.map(mediaFileService::getMediaFileView)
+							.collect(Collectors.toList()));
+					//orderElementView.setMediaFileViews(mediaFileViews);
+					orderElementViewList.add(orderElementView);
+				}
+			}
+			orderView.setOrderElementViewList(orderElementViewList);
+			return orderView;
 		}
 	}
 

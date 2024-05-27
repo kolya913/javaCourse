@@ -113,10 +113,6 @@
 </header>
 <div class="container">
 	<main role="main" class="pb-3">
-            @RenderBody()
-		<p>Имя пользователя: <span th:text="${#authentication.name}"></span></p>
-		<p>Роли пользователя: <span th:text="${#authentication.authorities}"></span></p>
-		<p>ID пользователя: <span th:text="${#authentication.principal.userId}"></span></p>
 		<div class="row">
 			<div th:each="category : ${categories}" class="col-md-4 mb-4 d-flex align-items-stretch">
 				<div class="card">
