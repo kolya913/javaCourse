@@ -9,37 +9,66 @@
 			integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
 			crossorigin="anonymous">
 	<style>
-		/* Flexbox для того, чтобы подвал всегда находился внизу */
-		body, html {
-			height: 100%;
-			margin: 0;
-		}
+		a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
 
-		.flex-container {
-			display: flex;
-			flex-direction: column;
-			min-height: 100%;
-		}
+a {
+  color: #0077cc;
+}
 
-		.content {
-			flex: 1; /* Контент занимает все доступное пространство */
-		}
+.btn-primary {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
 
-		.footer {
-			background-color: #888; /* Серый цвет подвала */
-			border-top: 1px solid #e5e5e5; /* Граница вверху подвала */
-			padding: 10px; /* Отступы в подвале */
-		}
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  color: #fff;
+  background-color: #1b6ec2;
+  border-color: #1861ac;
+}
 
-		.page-container {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        .content {
-            flex: 1;
-        }
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
 
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit.
+}
+
+.footer {
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap.
+}
+
+.bg-gray {
+  background-color: #888;
+}
+
+.smaller-form {
+  width: 40%;
+}
+
+.page-container {
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
+}
+.content {
+	flex: 1;
+}
 	</style>
 </head>
 <body>
@@ -52,6 +81,7 @@
 		</div>
 	</footer>
 </div>
+
 
 <script
 		src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
