@@ -77,6 +77,7 @@ public class WorkerService {
     }
     
     
+    @Transactional
     public void create(WorkerCreateDTO workerCreateDTO){
         Worker worker = workerMapper.fromWorkerCreateDTOTOWorker(workerCreateDTO);
         worker.setPassword(bCryptPasswordEncoder.encode(workerCreateDTO.getPassword()));

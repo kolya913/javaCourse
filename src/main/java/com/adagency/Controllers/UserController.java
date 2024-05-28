@@ -185,8 +185,7 @@ public class UserController {
         model.addAttribute("searchForm", form);
         model.addAttribute("usersPage", usersPage);
         model.addAttribute("size", size);
-        //fixme если запустить поиск то страница может быть пустой и не существатвь а также появляется в конце 0 страница которая ведет на -1
-        return "User/users"; // todo check value form + role + access + deleteFlag
+        return "User/users";
     }
     
     @PostMapping("/users")
@@ -244,7 +243,7 @@ public class UserController {
                                     Authentication authentication, BindingResult result){
         model.addAttribute("positions", positionService.getAll());
         model.addAttribute("roles", roleService.getAll());
-        model.addAttribute("registerWorker", workerCreateDTO);
+        model.addAttribute("registerWorker", new WorkerCreateDTO());
         workerService.create(workerCreateDTO);
         return "User/registerworker"; //todo view success or error
     }

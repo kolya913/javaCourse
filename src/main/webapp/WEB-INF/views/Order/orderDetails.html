@@ -50,16 +50,28 @@
 			line-height: inherit;
 		}
 
+
 		.footer {
-			position: absolute;
-			bottom: 0;
-			width: 100%;
-			white-space: nowrap;
-			line-height: 60px;
+		  bottom: 0;
+		  width: 100%;
+		  white-space: nowrap.
 		}
 
 		.bg-gray {
-			background-color: #888;
+		  background-color: #888;
+		}
+
+		.smaller-form {
+		  width: 40%;
+		}
+
+		.page-container {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+		.content {
+			flex: 1;
 		}
 	</style>
 </head>
@@ -77,16 +89,31 @@
 		<div class="row">
 			<div th:object="${order}" class="row">
 				<div th:if="${#authorization.expression('hasRole(''AGENT'')')}">
-					<a th:if="${order.statusView.id >= 3}"
+					<a th:if="${order.statusView.id >= 3 && order.statusView.id <= 7}"
 					   th:data-order-id="${order.id}"
 					   href="#"
 					   class="btn btn-warning btn-sm btn-add-to-order">
 						Отправить клиенту файлы по почте
 					</a>
+					<a th:if="${order.statusView.id == 8}"
+					   th:data-order-id="${order.id}"
+					   data-order-s="yes"
+					   href="#"
+					   class="btn btn-warning btn-sm btn-end-order">
+						Закончить рекламу
+<!--						todo доделать снятие и отказ и удлаение-->
+					</a>
+					<a th:if="${order.statusView.id == 8}"
+					   th:data-order-id="${order.id}"
+					   data-order-s="no"
+					   href="#"
+					   class="btn btn-warning btn-sm btn-end-order">
+						Снять рекламу
+					</a>
 				</div>
 				<div th:if="${#authorization.expression('hasRole(''CLIENT'')')}">
-					<a th:if="${order.statusView.id == 4}" th:data-order-id="${order.id}" data-order-s="yes"  href="#" class="btn btn-warning btn-sm btn-check-to-order">Согласиться</a>
-					<a th:if="${order.statusView.id == 4}" th:data-order-id="${order.id}" data-order-s="no"  href="#" class="btn btn-warning btn-sm btn-check-to-order">Отказаться</a>
+					<a th:if="${order.statusView.id == 4 || order.statusView.id == 7}" th:data-order-id="${order.id}" data-order-s="yes"  href="#" class="btn btn-warning btn-sm btn-check-to-order">Согласиться</a>
+					<a th:if="${order.statusView.id == 4 || order.statusView.id == 7}" th:data-order-id="${order.id}" data-order-s="no"  href="#" class="btn btn-warning btn-sm btn-check-to-order">Отказаться</a>
 					<a th:if="${order.statusView.id == 5 && order.payed == false}" th:data-order-id="${order.id}"   href="#" class="btn btn-warning btn-sm btn-pay-order">Оплатить</a>
 				</div>
 				<h2>Детали заказа</h2>
@@ -219,6 +246,37 @@
 
 </script>
 
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+
+		document.querySelectorAll('.btn-end-order').forEach(function(button) {
+			button.addEventListener('click', function(event) {
+				event.preventDefault();
+
+				var orderId = this.getAttribute('data-order-id');
+				var answer = this.getAttribute('data-order-s');
+
+				fetch('/ADAgency2/orders/agree?orderId=' + orderId + '&s=' + answer, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+				})
+				.then(function(response) {
+					return response.text();
+				})
+				.then(function(text) {
+					alert(text);
+				})
+				.catch(function(error) {
+					console.error('Ошибка:', error);
+				});
+			});
+		});
+	});
+
+</script>
 
 </body>
 </html>

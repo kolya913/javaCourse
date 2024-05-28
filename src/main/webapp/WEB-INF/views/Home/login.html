@@ -68,17 +68,21 @@
 </header>
 <div class="container">
     <main role="main" class="pb-3 d-flex align-items-center justify-content-center">
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
         <form th:action="@{/login}" th:object="${loginModel}" method="post" class="col-md-6 py-5 px-4 rounded shadow bg-white mt-3">
             <h1 class="h3 mb-3 font-weight-normal">Вход</h1>
 
             <div class="form-group">
                 <label for="email">Почта:</label>
                 <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Почта" required autofocus>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="alert alert-danger"></div>
             </div>
 
             <div class="form-group">
                 <label for="password">Пароль:</label>
                 <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Пароль" required>
+                <div id="passwordError" class="alert alert-danger" style="display: none;"></div>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="alert alert-danger"></div>
             </div>
 
             <button class="btn btn-lg btn-primary btn-block" type="submit">Вход</button>
@@ -91,6 +95,26 @@
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous">
+</script>
+<script>
+   <!-- document.addEventListener('DOMContentLoaded', function() {
+		var form = document.querySelector('form');
+		var passwordInput = document.getElementById('password');
+		var passwordPattern = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,20}$/;
+
+		form.addEventListener('submit', function(event) {
+			var password = passwordInput.value;
+			var passwordError = document.getElementById('passwordError');
+
+			if (!passwordPattern.test(password)) {
+				event.preventDefault();
+				passwordError.textContent = "Пароль должен содержать как минимум одну заглавную латинскую букву и одну цифру.";
+				passwordError.style.display = 'block';
+			} else {
+				passwordError.style.display = 'none';
+			}
+		});
+	});-->
 </script>
 </body>
 </html>

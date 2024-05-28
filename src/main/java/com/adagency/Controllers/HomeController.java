@@ -69,12 +69,13 @@ public class HomeController {
 			clientService.save(clientRegistrationDTO);
 		}catch (Exception e) {
 			model.addAttribute("emailError", e.getMessage());
-			return "Home/register";//TODO errorView
+			return "Home/register";
 		}
 		
 		if(role.equals("ROLE_ADMIN") || role.equals("ROLE_AGENT"))
 		{
 			model.addAttribute("success", "Клиент создан");
+			model.addAttribute("clientRegistrationDTO", new ClientRegistrationDTO());
 			return "Home/register";
 		}else{
 			try {
@@ -86,7 +87,7 @@ public class HomeController {
 				return "redirect:/";
 			}catch (Exception e){
 				model.addAttribute("emailError", e.getMessage());
-				return "Home/register";//TODO errorView
+				return "Home/register";
 			}
 		}
 	}
@@ -101,7 +102,7 @@ public class HomeController {
 	public String login(@ModelAttribute("loginModel") LoginModel loginModel,
 	                    BindingResult result, Model model) {
 		if (result.hasErrors()) {
-			return "Home/login"; // or an appropriate error handling view
+			return "Home/login";
 		}
 		try {
 			Optional<BaseModelPerson> baseModelPerson = baseModelPersonService.findByEmail(loginModel.getEmail());

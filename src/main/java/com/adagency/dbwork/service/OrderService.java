@@ -216,17 +216,27 @@ public class OrderService {
 		if(!order.isPresent()){
 			throw new EntityNotFoundException("OrderNotFound");
 		}else{
+			
+			
 			if(order.get().getOrderStatus().getId() == 3){
 				order.get().setOrderStatus(orderStatusService.findByName("Check").get());
 			}
+			
+			if(order.get().getOrderStatus().getId() == 6){
+				order.get().setOrderStatus(orderStatusService.findByName("Final").get());
+			}
 
 			if(status != null && !status.isEmpty()){
-				if(status.equals("no")){
-					order.get().setOrderStatus(orderStatusService.findByName("Check").get());
+				if(status.equals("no") && order.get().getOrderStatus().getId() == 4 ){
+					order.get().setOrderStatus(orderStatusService.findByName("Active").get());
+				} else if (status.equals("no") && order.get().getOrderStatus().getId() == 7 ) {
+					order.get().setOrderStatus(orderStatusService.findByName("Payed").get());
 				}
-
-				if(status.equals("yes")){
+				
+				if(status.equals("yes") && order.get().getOrderStatus().getId() == 4){
 					order.get().setOrderStatus(orderStatusService.findByName("Checked").get());
+				} else if (status.equals("yes") && order.get().getOrderStatus().getId() == 7 ) {
+					order.get().setOrderStatus(orderStatusService.findByName("Release").get());
 				}
 
 			}

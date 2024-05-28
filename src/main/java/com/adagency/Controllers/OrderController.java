@@ -124,19 +124,20 @@ public class OrderController {
 					.body("Произошла ошибка при добавлении работника в заказ.");
 		}
 	}
-
+	
 	@PostMapping("/orders/sendFiles")
 	@ResponseBody
 	public ResponseEntity<?> sendFiles(@RequestParam("orderId") Long orderId){
 		try {
-			orderService.updateOrderCheck(orderId, "");
+			orderService.updateOrderCheck(orderId, "Check");
 			return ResponseEntity.ok("Файлы отправлены");
-		}catch (Exception e){
+		} catch (Exception e) {
 			return ResponseEntity
 					.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("Ошибка отправки");
 		}
 	}
+
 
 	@PostMapping("/orders/agree")
 	@ResponseBody

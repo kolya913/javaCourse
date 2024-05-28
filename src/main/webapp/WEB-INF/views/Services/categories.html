@@ -87,17 +87,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-4">
-				<form>
-					<div class="form-group">
-						<label for="searchCategoryName">Поиск по названию категории</label>
-						<input type="text" class="form-control" id="searchCategoryName" placeholder="Введите название категории">
-					</div>
-					<div class="form-group">
-						<label for="searchServiceName">Поиск по названию услуги</label>
-						<input type="text" class="form-control" id="searchServiceName" placeholder="Введите название услуги">
-					</div>
-					<button type="submit" class="btn btn-primary">Поиск</button>
-				</form>
+				<a th:href="@{/managecategories/createcategory}" class="btn btn-info">Создать Категорию</a>
 			</div>
 			<div class="col-md-8">
 				<div class="row">

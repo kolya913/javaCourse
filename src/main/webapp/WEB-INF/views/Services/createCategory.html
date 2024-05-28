@@ -59,7 +59,7 @@
 		}
 
 		.bg-gray {
-			background-color: #888; /* Replace with your preferred gray color code */
+			background-color: #888;
 		}
 	</style>
 </head>
@@ -85,23 +85,23 @@
 
 			<form th:action="@{/managecategories/createcategory}" method="post" th:object="${categoryCreateDTO}" enctype="multipart/form-data" >
 				<label for="name">Название:</label>
-                <input type="text" id="name" name="name" th:field="*{name}">
+                <input type="text" id="name" name="name" th:field="*{name}" required>
                 <br>
 
 				<label for="description">описание категории:</label>
-                <input type="text" id="description" name="description" th:field="*{description}">
+                <input type="text" id="description" name="description" th:field="*{description}" required>
                 <br>
 
 				<label for="file.description" >Описание иконки: </label>
-				<input type="text" id="file.description" name="file.description" data-th-field="*{file.description}">
+				<input type="text" id="file.description" name="file.description" data-th-field="*{file.description}" required>
 				<br>
 
-				<label for="file.alt">надпись, которая оборазится сбоя иконки: </label>
-				<input type="text" id="file.alt" name="file.alt" data-th-field="*{file.alt}">
+				<label for="file.alt">надпись, которая отобразится сбоя иконки: </label>
+				<input type="text" id="file.alt" name="file.alt" data-th-field="*{file.alt}" required>
 				<br>
 
 				<label for="file.file"> Иконка категории:</label>
-				<input type="file" id="file.file" name="file.file" data-th-field="*{file.file}">
+				<input type="file" id="file.file" name="file.file" data-th-field="*{file.file}" required>
 				<br>
 				<input type="submit" value="Создать" class="btn btn-outline-dark">
 			</form>
@@ -115,6 +115,30 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		crossorigin="anonymous">
+</script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+    var form = document.querySelector('form');
+    var fileInput = document.getElementById('file.file');
+    var submitButton = form.querySelector('input[type="submit"]');
+
+    submitButton.addEventListener('click', function(event) {
+        if (fileInput.files.length === 0) {
+            event.preventDefault();
+            alert('Пожалуйста, загрузите изображение.');
+        } else {
+            var file = fileInput.files[0];
+            var imageType = /image.*/;
+
+            if (!file.type.match(imageType)) {
+                event.preventDefault();
+                alert('Файл не является изображением. Пожалуйста, загрузите изображение.');
+            }
+        }
+    });
+});
+
+
 </script>
 </body>
 </html>

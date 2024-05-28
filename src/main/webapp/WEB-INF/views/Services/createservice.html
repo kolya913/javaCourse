@@ -51,16 +51,27 @@
         }
 
         .footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            white-space: nowrap;
-            line-height: 60px;
-        }
+		  bottom: 0;
+		  width: 100%;
+		  white-space: nowrap.
+		}
 
-        .bg-gray {
-            background-color: #888; /* Replace with your preferred gray color code */
-        }
+		.bg-gray {
+		  background-color: #888;
+		}
+
+		.smaller-form {
+		  width: 40%;
+		}
+
+		.page-container {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+		.content {
+			flex: 1;
+		}
     </style>
 </head>
 <body>
@@ -85,42 +96,42 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="name">Service Name:</label>
+                        <label for="name">Название:</label>
                         <input type="text" id="name" th:field="*{name}" class="form-control" />
                     </div>
 
                     <div class="form-group">
-                        <label for="shortDescription">Description:</label>
+                        <label for="shortDescription">Короткое описание:</label>
                         <textarea id="shortDescription" th:field="*{shortDescription}" class="form-control"></textarea>
                     </div>
 
 
                     <div class="form-group">
-                        <label for="description">Description:</label>
+                        <label for="description">Описание:</label>
                         <textarea id="description" th:field="*{description}" class="form-control"></textarea>
                     </div>
 
                     <div id="mediaFilesContainer" class="form-group">
                         <div class="mediaFile">
-                            <label for="files0.description">File Description:</label>
+                            <label for="files0.description">Описание файла:</label>
                             <input type="text" id="files0.description" name="files[0].description" class="form-control" />
 
-                            <label for="files0.alt">Alt Text:</label>
+                            <label for="files0.alt">Alt файла:</label>
                             <input type="text" id="files0.alt" name="files[0].alt" class="form-control" />
 
-                            <label for="files0.file">File:</label>
-                            <input type="file" id="files0.file" name="files[0].file"  class="form-control-file" /> <!--fixme название файлов передается из name files[0].file files[1].file -->
+                            <label for="files0.file">Файла:</label>
+                            <input type="file" id="files0.file" name="files[0].file"  class="form-control-file"  accept="image/*"/>
 
-
-                            <label for="files0.main">Is Main:</label>
+                            <br>
+                            <label for="files0.main">Основной:</label>
                             <input type="checkbox" id="files0.main" name="files[0].main" class="form-check-input" />
 
                         </div>
                     </div>
 
-                    <button type="button" id="addMediaFileButton" class="btn btn-primary">Add Another Media File</button>
+                    <button type="button" id="addMediaFileButton" class="btn btn-primary">Добавить еще файл</button>
 
-                    <button type="submit" class="btn btn-success">Create Service</button>
+                    <button type="submit" class="btn btn-success">Создать услугу</button>
                 </form>
             </div>
         </div>
@@ -141,26 +152,62 @@
         var addMediaFileButton = document.getElementById('addMediaFileButton');
         var fileIndex = 1;
 
+        function updateFileIndexes() {
+            var mediaFiles = mediaFilesContainer.getElementsByClassName('mediaFile');
+            for (var i = 0; i < mediaFiles.length; i++) {
+                var mediaFile = mediaFiles[i];
+                mediaFile.querySelectorAll('input, label').forEach(function (element) {
+                    if (element.hasAttribute('id')) {
+                        var idAttr = element.getAttribute('id');
+                        var newIdAttr = idAttr.replace(/\d+/, i);
+                        element.setAttribute('id', newIdAttr);
+                    }
+                    if (element.hasAttribute('name')) {
+                        var nameAttr = element.getAttribute('name');
+                        var newNameAttr = nameAttr.replace(/\d+/, i);
+                        element.setAttribute('name', newNameAttr);
+                    }
+                    if (element.hasAttribute('for')) {
+                        var forAttr = element.getAttribute('for');
+                        var newForAttr = forAttr.replace(/\d+/, i);
+                        element.setAttribute('for', newForAttr);
+                    }
+                });
+            }
+            fileIndex = mediaFiles.length;
+        }
+
         addMediaFileButton.addEventListener('click', function() {
             var newMediaFileDiv = document.createElement('div');
             newMediaFileDiv.classList.add('mediaFile', 'mb-3');
 
             newMediaFileDiv.innerHTML = `
                 <div class="form-group">
-                    <label for="files${fileIndex}.description">File Description:</label>
+                    <label for="files${fileIndex}.description">Описание файла:</label>
                     <input type="text" id="files${fileIndex}.description" name="files[${fileIndex}].description" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="files${fileIndex}.alt">Alt Text:</label>
+                    <label for="files${fileIndex}.alt">Alt файла:</label>
                     <input type="text" id="files${fileIndex}.alt" name="files[${fileIndex}].alt" class="form-control" />
                 </div>
                 <div class="form-group">
-                    <label for="files${fileIndex}.file">File:</label>
-                    <input type="file" id="files${fileIndex}.file" name="files[${fileIndex}].file" class="form-control-file" />
+                    <label for="files${fileIndex}.file">Файл:</label>
+                    <input type="file" id="files${fileIndex}.file" name="files[${fileIndex}].file" class="form-control-file" accept="image/*" />
                 </div>
+                <label for="files${fileIndex}.main">Основной:</label>
+                <input type="checkbox" id="files${fileIndex}.main" name="files[${fileIndex}].main" class="form-check-input" />
+                <button type="button" class="btn btn-danger btn-sm mt-2 removeMediaFileButton">Удалить</button>
             `;
             mediaFilesContainer.appendChild(newMediaFileDiv);
             fileIndex++;
+        });
+
+        mediaFilesContainer.addEventListener('click', function(event) {
+            if (event.target.classList.contains('removeMediaFileButton')) {
+                var mediaFileDiv = event.target.closest('.mediaFile');
+                mediaFilesContainer.removeChild(mediaFileDiv);
+                updateFileIndexes();
+            }
         });
     });
 </script>

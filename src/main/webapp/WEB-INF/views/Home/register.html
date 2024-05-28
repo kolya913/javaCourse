@@ -74,6 +74,11 @@
                 <a th:href="@{/mainmenu}">Меню</a>
             </nav>
         </div>
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <span th:text="${success}"></span>
+        </div>
+
 
         <form action="register" method="post" th:object="${clientRegistrationDTO}" class="col-md-6 py-5 px-4 rounded shadow bg-white mt-3" style="border-radius: 1rem;">
 

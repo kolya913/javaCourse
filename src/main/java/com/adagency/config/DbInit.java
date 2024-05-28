@@ -124,6 +124,12 @@ public class DbInit implements ApplicationListener<ContextRefreshedEvent> {
             orderStatus.setName("Active");
             orderStatusService.createOrderStatus(orderStatus);
         }
+        
+        if(!orderStatusService.findByName("Check").isPresent()){
+            OrderStatus orderStatus = new OrderStatus();
+            orderStatus.setName("Check");
+            orderStatusService.createOrderStatus(orderStatus);
+        }
 
         if(!orderStatusService.findByName("Checked").isPresent()){
             OrderStatus orderStatus = new OrderStatus();
@@ -134,6 +140,18 @@ public class DbInit implements ApplicationListener<ContextRefreshedEvent> {
         if(!orderStatusService.findByName("Payed").isPresent()){
             OrderStatus orderStatus = new OrderStatus();
             orderStatus.setName("Payed");
+            orderStatusService.createOrderStatus(orderStatus);
+        }
+        
+        if(!orderStatusService.findByName("Final").isPresent()){
+            OrderStatus orderStatus = new OrderStatus();
+            orderStatus.setName("Final");
+            orderStatusService.createOrderStatus(orderStatus);
+        }
+        
+        if(!orderStatusService.findByName("Release").isPresent()){
+            OrderStatus orderStatus = new OrderStatus();
+            orderStatus.setName("Release");
             orderStatusService.createOrderStatus(orderStatus);
         }
 

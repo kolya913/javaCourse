@@ -49,17 +49,27 @@
 			font-size: 1rem;
 			line-height: inherit;
 		}
-
 		.footer {
-			position: absolute;
-			bottom: 0;
-			width: 100%;
-			white-space: nowrap;
-			line-height: 60px;
+		  bottom: 0;
+		  width: 100%;
+		  white-space: nowrap.
 		}
 
 		.bg-gray {
-			background-color: #888; /* Replace with your preferred gray color code */
+		  background-color: #888;
+		}
+
+		.smaller-form {
+		  width: 40%;
+		}
+
+		.page-container {
+			display: flex;
+			flex-direction: column;
+			min-height: 100vh;
+		}
+		.content {
+			flex: 1;
 		}
 	</style>
 </head>
@@ -95,13 +105,6 @@
 				<input type="checkbox" id="deleteFlag" th:field="*{deleteFlag}">
 				<br>
 
-				<label for="create">Дата создания</label>
-				<span id="create" th:text="${category.dateCreateAt}"></span>
-				<br>
-
-				<label for="update">Дата последнего обновления</label>
-				<span id="update" th:text="${category.dateLastUpdate}"></span>
-				<br>
 
 				<label for="fileAlt">File Alt</label>
 				<input type="text" id="fileAlt" th:field="*{file.fileAlt}" class="form-control">
@@ -137,6 +140,10 @@
 				<img class="card-img-top" th:src="@{'/' + ${category.file.filePath}}" alt="Изображение категории">
 			</div>
 
+			<p>Загруженное изображение:</p>
+			<img id="imagePreview" style="display:none;" alt="Предварительный просмотр изображения" />
+
+
 		</div>
 
 	</main>
@@ -147,6 +154,45 @@
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
 		integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
 		crossorigin="anonymous">
+</script>
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+    var form = document.querySelector('form');
+    var fileInput = document.getElementById('fileUpload');
+    var imagePreview = document.getElementById('imagePreview');
+
+    form.addEventListener('submit', function(event) {
+        var files = fileInput.files;
+        if (files.length > 0) {
+            var file = files[0];
+            if (!file.type.match('image.*')) {
+                event.preventDefault();
+                alert('Загруженный файл не является изображением. Пожалуйста, загрузите изображение.');
+            }
+        } else {
+            event.preventDefault();
+            alert('Пожалуйста, загрузите изображение перед сохранением.');
+        }
+    });
+
+    fileInput.addEventListener('change', function(event) {
+        var files = fileInput.files;
+        if (files.length > 0) {
+            var file = files[0];
+            if (file.type.match('image.*')) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert('Выбранный файл не является изображением.');
+            }
+        }
+    });
+});
+
 </script>
 </body>
 </html>
