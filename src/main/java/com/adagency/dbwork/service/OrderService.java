@@ -16,6 +16,8 @@ import com.adagency.model.entity.*;
 import com.adagency.model.mapper.servicepricingmapper.ServicePricingMapper;
 import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -51,9 +53,25 @@ public class OrderService {
 		this.orderStatusService = orderStatusService;
 		this.servicePricingMapper = servicePricingMapper;
 	}
+
+
+	@Transactional
+	public Optional<Order> getOrderById(Long id){
+		return orderRepository.findById(id);
+	}
 	
 	public List<OrderView> getAll(){
 		return orderRepository.findAll().stream().map(order -> {return OrderView.builder().
+				id(order.getId())
+				.statusId(order.getOrderStatus().getId())
+				.workerId(order.getWorker() == null ? -1L : order.getWorker().getId())
+				.clientId(order.getClient().getId())
+				.build();
+		}).collect(Collectors.toList());
+	}
+
+	public List<OrderView> getAll(Long orderId, Long workerId, Long clientId){
+		return orderRepository.findByCriteria(workerId, clientId, orderId).stream().map(order -> {return OrderView.builder().
 				id(order.getId())
 				.statusId(order.getOrderStatus().getId())
 				.workerId(order.getWorker() == null ? -1L : order.getWorker().getId())
@@ -216,7 +234,10 @@ public class OrderService {
 		if(!order.isPresent()){
 			throw new EntityNotFoundException("OrderNotFound");
 		}else{
-			
+
+			if(order.get().getOrderStatus().getId() <= 2 && status.equals("no")){
+				order.get().setOrderStatus(orderStatusService.findByName("Close").get());
+			}
 			
 			if(order.get().getOrderStatus().getId() == 3){
 				order.get().setOrderStatus(orderStatusService.findByName("Check").get());
@@ -231,12 +252,14 @@ public class OrderService {
 					order.get().setOrderStatus(orderStatusService.findByName("Active").get());
 				} else if (status.equals("no") && order.get().getOrderStatus().getId() == 7 ) {
 					order.get().setOrderStatus(orderStatusService.findByName("Payed").get());
+				} else if (status.equals("no") && order.get().getOrderStatus().getId() == 8 ) {
+					order.get().setOrderStatus(orderStatusService.findByName("Close").get());
 				}
 				
 				if(status.equals("yes") && order.get().getOrderStatus().getId() == 4){
 					order.get().setOrderStatus(orderStatusService.findByName("Checked").get());
-				} else if (status.equals("yes") && order.get().getOrderStatus().getId() == 7 ) {
-					order.get().setOrderStatus(orderStatusService.findByName("Release").get());
+				} else if (status.equals("yes") && order.get().getOrderStatus().getId() == 8 ) {
+					order.get().setOrderStatus(orderStatusService.findByName("Finish").get());
 				}
 
 			}

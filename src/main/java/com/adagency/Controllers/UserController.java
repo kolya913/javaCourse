@@ -136,6 +136,8 @@ public class UserController {
         
         if (result.hasErrors()) {
             model.addAttribute("validationErrors", result.getAllErrors());
+            model.addAttribute("roles", roleService.getAll());
+            model.addAttribute("positions", positionService.getAll());
             return "User/profileRefactor";
         }
         
@@ -161,7 +163,7 @@ public class UserController {
             clientService.findById(userProfileForm.getId()).ifPresent(person ->
                     clientService.update(userProfileForm));
         }
-        
+
         return "redirect:/profile/"+userProfileForm.getId();
     }
     
@@ -235,17 +237,23 @@ public class UserController {
         model.addAttribute("positions", positionService.getAll());
         model.addAttribute("roles", roleService.getAll());
         model.addAttribute("workerCreateDTO", new WorkerCreateDTO());
-        return "User/registerworker"; //todo view success or error
+
+        return "User/registerworker";
     }
     
     @PostMapping("/registerworker")
-    public String registerWorker(@ModelAttribute WorkerCreateDTO workerCreateDTO, Model model,
-                                    Authentication authentication, BindingResult result){
+    public String registerWorker(@ModelAttribute @Valid WorkerCreateDTO  workerCreateDTO,BindingResult result, Model model){
+        if(result.hasErrors()){
+            model.addAttribute("positions", positionService.getAll());
+            model.addAttribute("roles", roleService.getAll());
+            model.addAttribute("registerWorker", workerCreateDTO);
+        }
         model.addAttribute("positions", positionService.getAll());
         model.addAttribute("roles", roleService.getAll());
         model.addAttribute("registerWorker", new WorkerCreateDTO());
         workerService.create(workerCreateDTO);
-        return "User/registerworker"; //todo view success or error
+        model.addAttribute("success", "Клиент создан");
+        return "User/registerworker";
     }
 
     @GetMapping("/company")
@@ -265,7 +273,7 @@ public class UserController {
         try {
             companyService.create(createCompanyDTO);
         }catch (Exception e){
-            model.addAttribute("error", e.getMessage()); //todo error view
+            model.addAttribute("error", e.getMessage());
             return "User/createcompany";
         }
         return "redirect:/company";
@@ -286,7 +294,7 @@ public class UserController {
         try {
             companyService.delete(id);
         }catch (Exception e){
-            return "User/company"; //todo error view
+            return "User/company";
         }
         return "redirect:/company";
     }
@@ -298,7 +306,7 @@ public class UserController {
         }catch (EntityNotFoundException e){
             model.addAttribute("error","Компания с id = " + id + "не была найдена");
         }catch (Exception e){
-            model.addAttribute("error", e.getMessage()); //todo error view
+            model.addAttribute("error", e.getMessage());
         }
         return "User/companyedit";
     }
@@ -309,7 +317,7 @@ public class UserController {
         try {
             companyService.update(companyView);
         }catch (Exception e){
-            model.addAttribute("error", e.getMessage()); //todo error view
+            model.addAttribute("error", e.getMessage());
             return "User/companyedit";
         }
         return "redirect:/company";

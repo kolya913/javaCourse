@@ -1,5 +1,4 @@
 package com.adagency.model.entity;
-//todo dto create view error mapper service repo pagination
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

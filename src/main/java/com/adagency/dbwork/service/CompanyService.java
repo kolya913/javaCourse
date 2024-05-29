@@ -30,12 +30,12 @@ public class CompanyService {
 		this.companyMapper = companyMapper;
 	}
 
-	public List<Company> getAll(){ //todo dto + pagination
+	public List<Company> getAll(){
 		return  companyRepository.findAll();
 	}
 	
 	@Transactional
-	public void create(CompanyCreateDTO companyCreateDTO) throws Exception { //todo dto + error
+	public void create(CompanyCreateDTO companyCreateDTO) throws Exception {
 		Company company = Company.builder()
 				.name(companyCreateDTO.getName())
 				.build();
@@ -57,7 +57,6 @@ public class CompanyService {
 				companyCreateDTO.getFile().getAlt()
 		));
 		companyRepository.save(company);
-		//todo dto + error
 	}
 	
 	
@@ -91,10 +90,10 @@ public class CompanyService {
 	@Transactional
 	public void update(CompanyView companyView) throws IllegalArgumentException, IOException {
 		if (companyView.getId() == null) {
-			throw new IllegalArgumentException("Company ID must not be null"); //todo перенести в контроллер
+			throw new IllegalArgumentException("Company ID must not be null");
 		}
 		if (companyView.getFileId() == null) {
-			throw new IllegalArgumentException("Company.FileId ID must not be null"); //todo перенести в контроллер
+			throw new IllegalArgumentException("Company.FileId ID must not be null");
 		}
 		Optional<Company> company = companyRepository.findById(companyView.getId());
 		if(company.isPresent()){

@@ -146,7 +146,7 @@ public class ServiceService {
     public void removeService(Long id){
         Optional<Service> service = serviceRepository.findById(id);
         if(service.isPresent()){
-          service.get().setDeleteFlag(true);//todo флаг удаления для позиций
+          service.get().setDeleteFlag(true);
         }
         throw new EntityNotFoundException("ServiceNotFound");
     }

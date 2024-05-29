@@ -1,5 +1,4 @@
 package com.adagency.model.entity;
-//todo dto create view error mapper service repo
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 

@@ -47,10 +47,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .anonymous(anonymous -> anonymous.authenticationFilter(anonymousAuthenticationFilter()))
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/register", "/login", "/logout").permitAll()
-                        .requestMatchers("/mainmenu", "/profile/*", "/company").authenticated()
+                        .requestMatchers("/", "/register", "/login", "/logout", "/resources/images/Category/**", "/resources/images/Service/**").permitAll()
+                        .requestMatchers("/mainmenu", "/profile/*", "/company","/orders/**").authenticated()
                         .requestMatchers("/services/**", "/users", "/company/createcompany").hasAnyRole("AGENT", "ADMIN")
-                        .requestMatchers("/registerworker").hasAnyRole("ADMIN")
+                        .requestMatchers("/registerworker").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin((form) -> form
                         .loginPage("/login")

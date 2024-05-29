@@ -1,20 +1,23 @@
 package com.adagency.Controllers;
 
 import com.adagency.dbwork.jparepo.CategoryRepository;
-import com.adagency.dbwork.service.CategoryService;
-import com.adagency.dbwork.service.ClientService;
-import com.adagency.dbwork.service.OrderService;
-import com.adagency.dbwork.service.WorkerService;
+import com.adagency.dbwork.service.*;
 import com.adagency.model.dto.order.OrderCreate;
 import com.adagency.model.dto.order.OrderElementCreateList;
+import com.adagency.model.entity.BaseModelPerson;
 import com.adagency.model.entity.Category;
+import com.adagency.model.entity.Order;
 import com.adagency.model.entity.Worker;
+import com.adagency.model.security.CustomUserDetails;
+import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -27,6 +30,9 @@ public class OrderController {
 
 	@Autowired
 	private WorkerService workerService;
+
+	@Autowired
+	private BaseModelPersonService baseModelPersonService;
 	
 	@Autowired
 	public  OrderController(OrderService orderService, CategoryService categoryService, ClientService clientService){
@@ -36,8 +42,44 @@ public class OrderController {
 	}
 	
 	@GetMapping("/orders")
-	public String orders(Model model){
-		model.addAttribute("orders",  orderService.getAll()); //todo pagination + find
+	public String orders(Model model, Authentication authentication){
+		CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
+		Long currentUserId = currentUser.getUserId();
+		String role = currentUser.getAuthorities().iterator().next().getAuthority();
+		Optional<BaseModelPerson> person = baseModelPersonService.findById(currentUserId);
+		person.ifPresent(baseModelPerson -> {
+			if(baseModelPerson.getType().equals("Client")){
+				model.addAttribute("orders",  orderService.getAll(null, null, baseModelPerson.getId()));
+			} else if(baseModelPerson.getType().equals("Worker") && role.equals("ROLE_AGENT")){
+				model.addAttribute("orders",  orderService.getAll(null, baseModelPerson.getId(), null));
+			}else {
+				model.addAttribute("orders",  orderService.getAll(null, null, null));
+			}
+		});
+
+		return "Order/orders";
+	}
+
+
+	@PostMapping("/search")
+	public String handleSearchForm(@RequestParam(value = "orderNumber", required = false) Long orderId,
+								   @RequestParam(value = "workerId", required = false) Long workerId,
+								   @RequestParam(value = "clientId", required = false) Long clientId,
+								   Model model, Authentication authentication) {
+		CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
+		Long currentUserId = currentUser.getUserId();
+		String role = currentUser.getAuthorities().iterator().next().getAuthority();
+		Optional<BaseModelPerson> person = baseModelPersonService.findById(currentUserId);
+		person.ifPresent(baseModelPerson -> {
+			if(baseModelPerson.getType().equals("Client")){
+				model.addAttribute("orders",  orderService.getAll(orderId, null, baseModelPerson.getId()));
+			} else if(baseModelPerson.getType().equals("Worker") && role.equals("ROLE_AGENT")){
+				model.addAttribute("orders",  orderService.getAll(orderId, baseModelPerson.getId(),clientId));
+			}else {
+				model.addAttribute("orders",  orderService.getAll(orderId, workerId, clientId));
+			}
+		});
+
 		return "Order/orders";
 	}
 	
@@ -76,7 +118,14 @@ public class OrderController {
 	}
 	
 	@GetMapping("/orders/submitCreate/{id}")
-	public String ordersSubmitCreate(@PathVariable Long id, Model model){
+	public String ordersSubmitCreate(@PathVariable Long id, Model model, Authentication authentication) {
+		CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
+		Long currentUserId = currentUser.getUserId();
+		String role = currentUser.getAuthorities().iterator().next().getAuthority();
+		Optional<Order> order = orderService.getOrderById(id);
+		if((order.get().getWorker() != null && order.get().getWorker().getId() != currentUserId) || order.get().getClient().getId() != currentUserId){
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "OrderNotFound");
+		}
 		model.addAttribute("elements", orderService.getElementsToCreateByOrderId(id));
 		return "Order/submitCreate";
 	}

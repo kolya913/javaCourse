@@ -50,7 +50,7 @@ public class CategoryService {
     }
     
     @Transactional
-    public void create(CategoryCreateDTO categoryCreateDTO) throws Exception { //todo Status
+    public void create(CategoryCreateDTO categoryCreateDTO) throws Exception {
         Category category = categoryMapper.createCategoryDTOTOCategory(categoryCreateDTO);
         category.setDeleteFlag(false);
         category.setDateCreateAt(new Date());

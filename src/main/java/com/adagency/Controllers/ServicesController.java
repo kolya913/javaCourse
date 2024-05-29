@@ -70,7 +70,7 @@ public class ServicesController {
 		try{
 		categoryService.create(categoryCreateDTO);
 		} catch(Exception e){
-			model.addAttribute("error", e.getMessage()); //todo сделать отображение результата
+			model.addAttribute("error", e.getMessage());
 		}
 		return "Services/createCategory";
 	}
@@ -102,7 +102,7 @@ public class ServicesController {
 	@PostMapping("/managecategories/categoryEdit")
 	public String categoryEdit(@ModelAttribute("category") CategoryView categoryView, Model model) {
 		try{
-			model.addAttribute("category", categoryService.updateCategory(categoryView)); //todo сделать сообщение об ошибке и успехе
+			model.addAttribute("category", categoryService.updateCategory(categoryView));
 		}catch (EntityNotFoundException | IOException e){
 			model.addAttribute("category",categoryView);
 			model.addAttribute("status", statusService.getAll());

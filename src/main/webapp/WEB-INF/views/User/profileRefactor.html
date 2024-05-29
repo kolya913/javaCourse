@@ -115,7 +115,6 @@
 			</p>
 			<div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
 
-			<!--todo сделать отдельное прелставление с таблицей и поиском для изменения компании у клиентов-->
 			<div th:if="${#authentication.authorities.toString().contains('ROLE_ADMIN')}">
 				<div th:if="${typeUser == 'Worker'}">
 					<p>
