@@ -26,7 +26,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         AuthorizePersonDTO authorize = baseModelPersonService.authorize(email);
-        //return new org.springframework.security.core.userdetails.User(authorize.getEmail(), authorize.getPassword(), getAuthorities(authorize.getRole().getName()));
         return new CustomUserDetails(
                 authorize.getEmail(),
                 authorize.getPassword(),

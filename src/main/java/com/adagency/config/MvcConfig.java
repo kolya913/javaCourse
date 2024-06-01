@@ -28,8 +28,6 @@ public class MvcConfig implements WebMvcConfigurer {
 	
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		/*String appRootPath = System.getProperty("catalina.home");
-		String resourcePath = appRootPath + "/webapps/ADAgency2/resources/";*/
 		
 		registry
 				.addResourceHandler("/resources/**")
@@ -72,7 +70,7 @@ public class MvcConfig implements WebMvcConfigurer {
 	@Bean
 	public CommonsMultipartResolver multipartResolver() {
 		CommonsMultipartResolver resolver = new CommonsMultipartResolver();
-		resolver.setMaxUploadSize(-1); // -1 indicates no limit
+		resolver.setMaxUploadSize(-1);
 		return resolver;
 	}
 	

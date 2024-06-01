@@ -44,27 +44,20 @@ public class ClientService {
         this.clientRepository = clientRepository;
         this.clientMapperImpl = clientMapperImpl;
     }
-
-    public Client findByEmail(String email) {
-        return clientRepository.findByEmail(email);
-    }
-
+    
     public Optional<Client> findById(Long id) {
         return clientRepository.findById(id);
     }
 
     @Transactional
     public UserProfileForm getProfileForm(Long id){
-        return clientMapperImpl.fromClientToUserProfileForm(findById(id).get());
-    }
-
-    public Client convertBaseModelPersonToClient(BaseModelPerson baseModelPerson){
-        return (Client) baseModelPerson;
+        return clientMapperImpl.fromClientToUserProfileForm(clientRepository.findById(id).get());
     }
     
+    @Transactional
     public void update(UserProfileForm userProfileForm){
         if(!clientRepository.findById(userProfileForm.getId()).isPresent()){
-            throw new EntityNotFoundException("Client with ID " + userProfileForm.getId() + " not found");
+            throw new EntityNotFoundException("ClientNotFound");
         }
         clientRepository.findById(userProfileForm.getId()).ifPresent(person ->{
             clientMapperImpl.fromUserProfileFormToClient(userProfileForm, person);
@@ -77,7 +70,7 @@ public class ClientService {
         });
     }
     
-    
+    @Transactional
     public void save(ClientRegistrationDTO clientRegister) throws Exception {
         List<BaseModelPerson> baseModelPersonList = baseModelPersonService.findByEmailOrPhoneNumber(clientRegister.getEmail(), clientRegister.getPhoneNumber());
         if(baseModelPersonList.isEmpty()){
@@ -89,9 +82,9 @@ public class ClientService {
             clientRepository.save(client);
         }
         else{
-            boolean[] checks = {false, false}; // [emailExists, phoneNumberExists]
+            boolean[] checks = {false, false};
 
-            baseModelPersonList.parallelStream().forEach(person -> {
+            baseModelPersonList.forEach(person -> {
                 if (person.getEmail().equals(clientRegister.getEmail())) {
                     checks[0] = true;
                 }
@@ -109,13 +102,13 @@ public class ClientService {
         }
     }
 
-
-    public void save(Client client, boolean nopassword) {
-        clientRepository.save(client);
-    }
-
-    public List<Client> getAll(){
-        return clientRepository.findAll();
-    }
+//
+//    public void save(Client client, boolean nopassword) {
+//        clientRepository.save(client);
+//    }
+//
+//    public List<Client> getAll(){
+//        return clientRepository.findAll();
+//    }
 
 }

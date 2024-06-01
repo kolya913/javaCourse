@@ -30,9 +30,6 @@ public class CompanyService {
 		this.companyMapper = companyMapper;
 	}
 
-	public List<Company> getAll(){
-		return  companyRepository.findAll();
-	}
 	
 	@Transactional
 	public void create(CompanyCreateDTO companyCreateDTO) throws Exception {
@@ -40,13 +37,6 @@ public class CompanyService {
 				.name(companyCreateDTO.getName())
 				.build();
 		companyRepository.save(company);
-		
-		/*String appRootPath = System.getProperty("catalina.home");
-
-		String resourcePath = appRootPath + "/webapps/ADAgency2/resources/";
-
-		String fullPath = resourcePath  +
-				"images/Company/" + company.getId() + "/" + companyCreateDTO.getFile().getFile().getOriginalFilename();*/
 		
 		company.setLogo(mediaFileService.testCreateWithTransferFileToPathServer(
 				companyCreateDTO.getFile(),
@@ -71,7 +61,7 @@ public class CompanyService {
 			mediaFileService.delete(company.get().getLogo());
 			companyRepository.delete(company.get());
 		}else {
-			throw new EntityNotFoundException("CompanyWithId" + id);
+			throw new EntityNotFoundException("CompanyNotFound");
 		}
 	}
 
@@ -83,7 +73,7 @@ public class CompanyService {
 			companyView.setFilePath(toRelativePath(company.get().getLogo().getPath()));
 			return  companyView;
 		}else {
-			throw new EntityNotFoundException("CompanyWithId" + id);
+			throw new EntityNotFoundException("CompanyNotFound");
 		}
 	}
 	
@@ -98,18 +88,22 @@ public class CompanyService {
 		Optional<Company> company = companyRepository.findById(companyView.getId());
 		if(company.isPresent()){
 			if(companyView.getFileId() != null && company.get().getLogo().getId() != companyView.getFileId()){
-				throw  new IllegalArgumentException ("FileWithId=" + companyView.getFileId() + "NotSameInDb");
+				throw  new IllegalArgumentException ("FileNotSameInDb");
 			}
 			if(companyView.getId() != null && !companyView.getId().equals(company.get().getId())){
-				throw  new IllegalArgumentException ("CompanyWithId=" + companyView.getFileId() + "NotSameInDb");
+				throw  new IllegalArgumentException ("CompanyNotSameInDb");
 			}
-			//mediaFileService.update(companyView.getId(), companyView.getFileDescription(), companyView.getFileAlt(), companyView.getFile());
 			company.get().setName(companyView.getName());
 			company.get().setLogo(mediaFileService.update(companyView.getFileId(), companyView.getFileDescription(), companyView.getFileAlt(), companyView.getFile()));
 			companyRepository.save(company.get());
 		}else{
-			throw  new EntityNotFoundException("CompanyWithId=" + companyView.getId() + "NotFound");
+			throw  new EntityNotFoundException("CompanyNotFound");
 		}
+	}
+	
+	
+	public List<Company> getAll(){
+		return  companyRepository.findAll();
 	}
 
 }

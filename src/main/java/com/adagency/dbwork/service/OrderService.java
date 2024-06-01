@@ -1,23 +1,16 @@
 package com.adagency.dbwork.service;
 
 import com.adagency.dbwork.jparepo.OrderRepository;
-import com.adagency.model.dto.category.ClientSimpleCategory;
-import com.adagency.model.dto.mediafile.MediaFileView;
 import com.adagency.model.dto.order.OrderCreate;
 import com.adagency.model.dto.order.OrderElementCreate;
 import com.adagency.model.dto.order.OrderElementCreateList;
 import com.adagency.model.dto.order.OrderView;
 import com.adagency.model.dto.orderelement.OrderElementView;
 import com.adagency.model.dto.person.UserProfileForm;
-import com.adagency.model.dto.service.ServiceSimpleView;
-import com.adagency.model.dto.servicepricing.ServicePricingView;
 import com.adagency.model.dto.status.StatusView;
 import com.adagency.model.entity.*;
 import com.adagency.model.mapper.servicepricingmapper.ServicePricingMapper;
-import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -86,7 +79,6 @@ public class OrderService {
 		if(!client.isPresent()){
 			throw new EntityNotFoundException("ClientNotFound");
 		}else{
-			//long existingOrders = orderRepository.countOrdersByClientIdAndOrderStatusId(orderCreate.getClientId());
 			
 			Order order = new Order();
 			order.setClient(client.get());

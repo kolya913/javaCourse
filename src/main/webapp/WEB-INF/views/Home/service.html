@@ -118,12 +118,9 @@
 					<td th:text="${pricing.minPeriodInDays}"></td>
 					<td th:text="${pricing.maxPeriodInDays}"></td>
 					<td th:text="${pricing.circulation}"></td>
-<!--					<td th:if="${#authorization.expression('isAuthenticated()')}">-->
-					<td>
+					<td th:if="${!#authorization.expression('hasRole(''ADMIN'')')} and ${!#authorization.expression('hasRole(''AGENT'')')}">
 						<a href="#" th:data-pricing-id="${pricing.id}" th:data-user-id="${#authentication.principal.userId}" class="btn btn-primary btn-add-to-order">Добавить к заказу</a>
 					</td>
-
-					<!--					</td>-->
 				</tr>
 				</tbody>
 			</table>
