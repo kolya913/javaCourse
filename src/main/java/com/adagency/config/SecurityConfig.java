@@ -48,9 +48,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .anonymous(anonymous -> anonymous.authenticationFilter(anonymousAuthenticationFilter()))
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/register", "/login", "/logout", "/resources/images/Category/**", "/resources/images/Service/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/logout", "/resources/images/Category/**", "/resources/images/Service/**",
+                                "/category/**", "/service/**", "/addtoorder").permitAll()
                         .requestMatchers("/mainmenu", "/profile/*", "/company","/orders/**").authenticated()
-                        .requestMatchers("/services/**", "/users", "/company/createcompany").hasAnyRole("AGENT", "ADMIN")
+                        .requestMatchers("/managecategories/**", "/users", "/company/createcompany").hasAnyRole("AGENT", "ADMIN")
                         .requestMatchers("/registerworker").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin((form) -> form

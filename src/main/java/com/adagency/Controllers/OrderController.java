@@ -13,12 +13,16 @@ import com.sun.org.apache.xpath.internal.operations.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
 @Controller
@@ -142,24 +146,48 @@ public class OrderController {
 		model.addAttribute("order", orderService.getOrderViewForDetails(id));
 		return  "Order/orderDetails";
 	}
-	
+
 	@PostMapping("/addtoorder")
 	@ResponseBody
-	public ResponseEntity<?> addToOrder(@RequestParam("pricingId") Long pricingId, @RequestParam("userId") Long userId) {
-		if (userId == -1) {
+	public ResponseEntity<?> addToOrder(@RequestParam("pricingId") Long pricingId) {
+		//HttpSession session = request.getSession(false);
+
+
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+		if (authentication == null || authentication instanceof AnonymousAuthenticationToken) {
 			return ResponseEntity
 					.status(HttpStatus.UNAUTHORIZED)
 					.body("Необходимо войти в аккаунт или зарегистрироваться, чтобы добавить услугу в заказ.");
 		}
-		try {
-			orderService.addToOrder(pricingId, userId);
-			return ResponseEntity.ok("Услуга успешно добавлена в заказ.");
-		} catch (Exception e) {
+
+		CustomUserDetails currentUser = (CustomUserDetails) authentication.getPrincipal();
+		Long currentUserId = currentUser.getUserId();
+		String role = currentUser.getAuthorities().iterator().next().getAuthority();
+		if (currentUserId == null || currentUserId == -1) {
 			return ResponseEntity
-					.status(HttpStatus.INTERNAL_SERVER_ERROR)
+					.status(HttpStatus.UNAUTHORIZED)
+					.body("Необходимо войти в аккаунт или зарегистрироваться, чтобы добавить услугу в заказ.");
+		}
+
+		if(role.equals("ROLE_CLIENT")){
+			try {
+				orderService.addToOrder(pricingId, currentUserId);
+				return ResponseEntity.ok("Услуга успешно добавлена в заказ.");
+			} catch (Exception e) {
+				return ResponseEntity
+						.status(HttpStatus.INTERNAL_SERVER_ERROR)
+						.body("ExpeПроизошла ошибка при добавлении услуги в заказ. role= " + role);
+			}
+		}else{
+			return ResponseEntity
+					.status(HttpStatus.FORBIDDEN)
 					.body("Произошла ошибка при добавлении услуги в заказ.");
 		}
-	}
+
+    }
+
 
 	@PostMapping("/orders/addWorker")
 	@ResponseBody

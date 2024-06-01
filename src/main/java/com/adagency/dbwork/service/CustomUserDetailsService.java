@@ -4,6 +4,7 @@ import com.adagency.model.dto.security.AuthorizePersonDTO;
 import com.adagency.model.security.CustomUserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,7 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 authorize.getEmail(),
                 authorize.getPassword(),
                 getAuthorities(authorize.getRole().getName()),
-                authorize.getId() //
+                authorize.getId()
         );
 
     }
