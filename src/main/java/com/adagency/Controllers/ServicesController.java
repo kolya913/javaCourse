@@ -176,9 +176,6 @@ public class ServicesController {
 			return "Services/editServices";
 		}
 		
-/*		Stream<MediaFileCreate> mediaFileCreatesStream = (serviceEdit.getMediaFileCreates() != null) ?
-				serviceEdit.getMediaFileCreates().stream().filter(MediaFileCreate::isMain) :
-				Stream.empty();*/
 		
 		if(Stream.concat(
 				serviceEdit.getMediaFiles().stream().parallel().filter(mediaFile -> mediaFile.isMain() && !mediaFile.isDeleteFlag()),
@@ -192,7 +189,7 @@ public class ServicesController {
 
 		try {
 			serviceService.updateService(serviceEdit);
-			model.addAttribute("error","УСПЕЗХЗ!1!!!!!!1?         Лист создания " + serviceEdit.getMediaFileCreates().toArray().length);
+			model.addAttribute("success","УСПЕХ!");
 		}catch (Exception e){
 			model.addAttribute("error", e.getMessage());
 		}

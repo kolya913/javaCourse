@@ -80,17 +80,48 @@
 					<a th:href="@{/orders/create/{id}(id=${#authentication.principal.userId})}" class="btn btn-primary">Создать заказ</a>
 				</div>
 
-				<form th:action="@{/search}" method="post">
+				<form th:action="@{/search}" th:object="${orderSearch}" method="post">
 					<div class="form-group">
 						<label for="orderNumber">Номер заказа</label>
-						<input type="text" id="orderNumber" name="orderNumber" class="form-control" placeholder="Номер заказа">
-						<label for="orderNumber">Работник</label>
-						<input type="text" id="workerId" name="workerId" class="form-control" placeholder="Работник">
-						<label for="orderNumber">Клиент</label>
-						<input type="text" id="clientId" name="clientId" class="form-control" placeholder="Клиент">
+						<input type="text" id="orderNumber" name="orderId" class="form-control" placeholder="Номер заказа" th:value="*{orderId}">
+						<label for="workerId">Работник</label>
+						<input type="text" id="workerId" name="workerId" class="form-control" placeholder="Работник" th:value="*{workerId}">
+						<label for="clientId">Клиент</label>
+						<input type="text" id="clientId" name="clientId" class="form-control" placeholder="Клиент" th:value="*{clientId}">
 					</div>
+
+					<div class="form-group">
+						<label for="size">Элементов на странице:</label>
+						<select id="size" name="size" th:value="${size}">
+							<option value="15" th:selected="${size == 15}">15</option>
+							<option value="20" th:selected="${size == 20}">20</option>
+							<option value="25" th:selected="${size == 25}">25</option>
+							<option value="30" th:selected="${size == 30}">30</option>
+						</select>
+					</div>
+
+					<nav aria-label="Page navigation" th:if="${orders.totalPages > 0}">
+						<ul class="pagination">
+							<li class="page-item" th:classappend="${orders.number == 0 ? 'disabled' : ''}">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=1, orderSearch=${orderSearch})}" aria-label="Previous">
+									<span aria-hidden="true">«</span>
+								</a>
+							</li>
+							<li class="page-item" th:each="i : ${#numbers.sequence(1, orders.totalPages)}" th:classappend="${i-1 == orders.number ? 'active' : ''}">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=${i}, orderSearch=${orderSearch})}" th:text="${i}">1</a>
+							</li>
+							<li class="page-item" th:classappend="${orders.number + 1 == orders.totalPages ? 'disabled' : ''}">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=${orders.totalPages}, orderSearch=${orderSearch})}" aria-label="Next">
+									<span aria-hidden="true">»</span>
+								</a>
+							</li>
+						</ul>
+					</nav>
+
+
 					<button type="submit" class="btn btn-primary">Поиск</button>
 				</form>
+
 			</div>
 			<div class="col-md-8">
 				<table class="table">

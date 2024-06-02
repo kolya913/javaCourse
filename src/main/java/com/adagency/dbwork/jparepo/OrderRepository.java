@@ -15,16 +15,17 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 	boolean existsByClientIdAndOrderStatusId(Long clientId, Long orderStatusId);
 	List<Order> findByClientIdAndOrderStatusId(Long clientId, Long orderStatusId);
-
-
+	
+	
 	@Query("SELECT p FROM Order p WHERE " +
 			"(:workerId IS NULL OR p.worker.id = :workerId) AND " +
 			"(:clientId IS NULL OR p.client.id = :clientId) AND " +
 			"(:orderId IS NULL OR p.id = :orderId)")
-	List<Order> findByCriteria(
+	Page<Order> findByCriteria(
 			@Param("workerId") Long workerId,
 			@Param("clientId") Long clientId,
-			@Param("orderId") Long orderId
-	);
+			@Param("orderId") Long orderId,
+			Pageable pageable);
+
 
 }

@@ -11,14 +11,13 @@ import com.adagency.model.dto.status.StatusView;
 import com.adagency.model.entity.*;
 import com.adagency.model.mapper.servicepricingmapper.ServicePricingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,6 +52,7 @@ public class OrderService {
 		return orderRepository.findById(id);
 	}
 	
+	/*@Transactional
 	public List<OrderView> getAll(){
 		return orderRepository.findAll().stream().map(order -> {return OrderView.builder().
 				id(order.getId())
@@ -61,9 +61,23 @@ public class OrderService {
 				.clientId(order.getClient().getId())
 				.build();
 		}).collect(Collectors.toList());
+	}*/
+	
+	public Page<OrderView> getAll(Pageable pageable, Long workerId, Long clientId, Long orderId) {
+		Page<Order> orders = orderRepository.findByCriteria(workerId, clientId, orderId, pageable);
+		return orders.map(order -> OrderView.builder()
+				.id(order.getId())
+				.statusId(order.getOrderStatus().getId())
+				.workerId(order.getWorker() == null ? -1L : order.getWorker().getId())
+				.clientId(order.getClient().getId())
+				.build());
 	}
 
-	public List<OrderView> getAll(Long orderId, Long workerId, Long clientId){
+
+	
+	
+
+/*	public List<OrderView> getAll(Long orderId, Long workerId, Long clientId){
 		return orderRepository.findByCriteria(workerId, clientId, orderId).stream().map(order -> {return OrderView.builder().
 				id(order.getId())
 				.statusId(order.getOrderStatus().getId())
@@ -71,7 +85,7 @@ public class OrderService {
 				.clientId(order.getClient().getId())
 				.build();
 		}).collect(Collectors.toList());
-	}
+	}*/
 	
 	@Transactional
 	public Long createOrder(OrderCreate orderCreate) throws Exception {
@@ -188,14 +202,9 @@ public class OrderService {
 					orderElementView.setText(orderElement.getText());
 					orderElementView.setServiceId(orderElement.getServicePricing().getId());
 					orderElementView.setServiceName(orderElement.getServicePricing().getServiceName());
-					/*List<MediaFileView> mediaFileViews = new ArrayList<>();
-					for(MediaFile mediaFile : orderElement.getMediaFiles()){
-						mediaFileViews.add(mediaFileService.getMediaFileView(mediaFile));
-					}*/
 					orderElementView.setMediaFileViews(orderElement.getMediaFiles().stream()
 							.map(mediaFileService::getMediaFileView)
 							.collect(Collectors.toList()));
-					//orderElementView.setMediaFileViews(mediaFileViews);
 					orderElementViewList.add(orderElementView);
 				}
 			}
@@ -206,16 +215,22 @@ public class OrderService {
 
 	@Transactional
 	public void addWorkerToOrder(Long orderId, Long workerId){
-		Optional<Worker> worker = workerService.findById(workerId);
 		Optional<Order> order = orderRepository.findById(orderId);
-		if(!worker.isPresent()){
-			throw new EntityNotFoundException("WorkerNotFound");
-		}
 		if(!order.isPresent()){
 			throw new EntityNotFoundException("OrderNotFound");
 		}
-		order.get().setWorker(worker.get());
-		order.get().setOrderStatus(orderStatusService.findByName("Active").get());
+		if(workerId == -1){
+			order.get().setWorker(null);
+			order.get().setOrderStatus(orderStatusService.findByName("Created").get());
+			
+		}else{
+			Optional<Worker> worker = workerService.findById(workerId);
+			if(!worker.isPresent()){
+				throw new EntityNotFoundException("WorkerNotFound");
+			}
+			order.get().setWorker(worker.get());
+			order.get().setOrderStatus(orderStatusService.findByName("Active").get());
+		}
 		orderRepository.save(order.get());
 	}
 
@@ -262,11 +277,14 @@ public class OrderService {
 	}
 
 	@Transactional
-	public void pay(Long orderId){
+	public void pay(Long orderId, Long clientId) throws Exception {
 		Optional<Order> order = orderRepository.findById(orderId);
 		if(!order.isPresent()){
 			throw new EntityNotFoundException("OrderNotFound");
 		}else{
+			if(!Objects.equals(order.get().getClient().getId(), clientId)){
+				throw new EntityNotFoundException();
+			}
 			if(order.get().getOrderStatus().getId() == 5){
 				order.get().setOrderStatus(orderStatusService.findByName("Payed").get());
 				order.get().setPayed(true);

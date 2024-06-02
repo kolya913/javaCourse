@@ -206,7 +206,7 @@ public class UserController {
         model.addAttribute("usersPage", usersPage);
         model.addAttribute("size", size);
         
-        return "User/users"; //
+        return "User/users";
     }
     
     @GetMapping("/deleteUser/{id}")

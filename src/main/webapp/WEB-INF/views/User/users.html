@@ -134,22 +134,23 @@
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
                             <li th:classappend="${usersPage.first ? 'disabled' : ''}">
-                                <a th:href="@{/users(page=${usersPage.number - 1})}" aria-label="Previous">
+                                <a th:href="@{/users(page=${usersPage.number - 1}, size=${size})}" aria-label="Previous">
                                     <span aria-hidden="true">«</span>
                                 </a>
                             </li>
 
                             <li th:each="i : ${#numbers.sequence(1, usersPage.totalPages)}" th:classappend="${(i - 1) == usersPage.number ? 'active' : ''}">
-                                <a th:href="@{/users(page=${i - 1})}" th:text="${i}"></a>
+                                <a th:href="@{/users(page=${i - 1}, size=${size})}" th:text="${i}"></a>
                             </li>
 
                             <li th:classappend="${usersPage.last ? 'disabled' : ''}">
-                                <a th:href="@{/users(page=${usersPage.number + 1})}" aria-label="Next">
+                                <a th:href="@{/users(page=${usersPage.number + 1}, size=${size})}" aria-label="Next">
                                     <span aria-hidden="true">»</span>
                                 </a>
                             </li>
                         </ul>
                     </nav>
+
 
                 </form>
             </div>
