@@ -69,14 +69,18 @@
     <main role="main" class="pb-3">
         <div class="navigation-buttons">
             <a th:href="@{/profile/{id}(id=${#authentication.principal.userId})}">Мой профиль</a>
-            <a th:href="@{/users}">Пользователи</a>
-            <a th:href="@{/registerworker}">Создать работника</a>
-            <a th:href="@{/register}">Создать клиента</a>
             <a th:href="@{/company}">Компании</a>
-            <a href="orders">Заявки/Контракты</a>
-            <a th:href="@{/managecategories}">Услуги</a>
+            <a href="orders">Заявки/Заказы</a>
+
+            <a th:href="@{/users}" th:if="${#authorization.expression('hasRole(''ADMIN'') or hasRole(''AGENT'')')}">Пользователи</a>
+            <a th:href="@{/register}" th:if="${#authorization.expression('hasRole(''ADMIN'') or hasRole(''AGENT'')')}">Создать клиента</a>
+
+            <a th:href="@{/registerworker}" th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Создать работника</a>
+
+            <a th:href="@{/managecategories}" th:if="${#authorization.expression('hasRole(''ADMIN'') or hasRole(''AGENT'')')}">Услуги</a>
         </div>
     </main>
+
 </div>
 <div th:replace="fragments/footer :: footer">&nbsp;</div>
 <script

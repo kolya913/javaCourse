@@ -103,20 +103,48 @@
 					<nav aria-label="Page navigation" th:if="${orders.totalPages > 0}">
 						<ul class="pagination">
 							<li class="page-item" th:classappend="${orders.number == 0 ? 'disabled' : ''}">
-								<a class="page-link" th:href="@{/orders(size=${size}, page=1, orderSearch=${orderSearch})}" aria-label="Previous">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=${orders.number - 1}, orderSearch=${orderSearch})}" aria-label="Previous">
 									<span aria-hidden="true">«</span>
 								</a>
 							</li>
-							<li class="page-item" th:each="i : ${#numbers.sequence(1, orders.totalPages)}" th:classappend="${i-1 == orders.number ? 'active' : ''}">
-								<a class="page-link" th:href="@{/orders(size=${size}, page=${i}, orderSearch=${orderSearch})}" th:text="${i}">1</a>
+
+							<li class="page-item" th:classappend="${orders.number == 0 ? 'active' : ''}">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=1, orderSearch=${orderSearch})}">1</a>
 							</li>
+
+							<li class="page-item" th:if="${orders.number > 2}" disabled>
+								<span class="page-link">...</span>
+							</li>
+
+							<li class="page-item" th:if="${orders.number > 0}" th:classappend="${orders.number - 1 == orders.number ? 'active' : ''}">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=${orders.number}, orderSearch=${orderSearch})}" th:text="${orders.number}"></a>
+							</li>
+
+							<li class="page-item" th:classappend="${orders.number == orders.number ? 'active' : ''}">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=${orders.number + 1}, orderSearch=${orderSearch})}" th:text="${orders.number + 1}"></a>
+							</li>
+
+							<li class="page-item" th:if="${orders.totalPages > orders.number + 1}" th:classappend="${orders.number + 1 == orders.number ? 'active' : ''}">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=${orders.number + 2}, orderSearch=${orderSearch})}" th:text="${orders.number + 2}"></a>
+							</li>
+
+							<li class="page-item" th:if="${orders.totalPages > orders.number + 2}" disabled>
+								<span class="page-link">...</span>
+							</li>
+
+							<li class="page-item" th:if="${orders.totalPages > 1 && orders.totalPages != orders.number + 1}" th:classappend="${orders.totalPages == orders.number ? 'active' : ''}">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=${orders.totalPages}, orderSearch=${orderSearch})}" th:text="${orders.totalPages}"></a>
+							</li>
+
 							<li class="page-item" th:classappend="${orders.number + 1 == orders.totalPages ? 'disabled' : ''}">
-								<a class="page-link" th:href="@{/orders(size=${size}, page=${orders.totalPages}, orderSearch=${orderSearch})}" aria-label="Next">
+								<a class="page-link" th:href="@{/orders(size=${size}, page=${orders.number + 2}, orderSearch=${orderSearch})}" aria-label="Next">
 									<span aria-hidden="true">»</span>
 								</a>
 							</li>
 						</ul>
 					</nav>
+
+
 
 
 					<button type="submit" class="btn btn-primary">Поиск</button>
