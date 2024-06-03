@@ -52,16 +52,6 @@ public class OrderService {
 		return orderRepository.findById(id);
 	}
 	
-	/*@Transactional
-	public List<OrderView> getAll(){
-		return orderRepository.findAll().stream().map(order -> {return OrderView.builder().
-				id(order.getId())
-				.statusId(order.getOrderStatus().getId())
-				.workerId(order.getWorker() == null ? -1L : order.getWorker().getId())
-				.clientId(order.getClient().getId())
-				.build();
-		}).collect(Collectors.toList());
-	}*/
 	
 	public Page<OrderView> getAll(Pageable pageable, Long workerId, Long clientId, Long orderId) {
 		Page<Order> orders = orderRepository.findByCriteria(workerId, clientId, orderId, pageable);
@@ -73,19 +63,6 @@ public class OrderService {
 				.build());
 	}
 
-
-	
-	
-
-/*	public List<OrderView> getAll(Long orderId, Long workerId, Long clientId){
-		return orderRepository.findByCriteria(workerId, clientId, orderId).stream().map(order -> {return OrderView.builder().
-				id(order.getId())
-				.statusId(order.getOrderStatus().getId())
-				.workerId(order.getWorker() == null ? -1L : order.getWorker().getId())
-				.clientId(order.getClient().getId())
-				.build();
-		}).collect(Collectors.toList());
-	}*/
 	
 	@Transactional
 	public Long createOrder(OrderCreate orderCreate) throws Exception {
